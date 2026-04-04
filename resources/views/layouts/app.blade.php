@@ -51,13 +51,28 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="/products" class="nav-link">
+                        <i class="bi bi-boxes me-2"></i> Kelola Master Barang
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/categories" class="nav-link">
+                        <i class="bi bi-tags me-2"></i> Kelola Kategori
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/suppliers" class="nav-link">
+                        <i class="bi bi-truck me-2"></i> Kelola Supplier
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="/purchases" class="nav-link">
-                        <i class="bi bi-box-arrow-in-down me-2"></i> Barang Masuk
+                        <i class="bi bi-box-arrow-in-down me-2"></i> Trx Barang Masuk
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="/users" class="nav-link">
-                        <i class="bi bi-people me-2"></i> Kelola Admin
+                        <i class="bi bi-people me-2"></i> Manajemen Akun
                     </a>
                 </li>
                 @endif
