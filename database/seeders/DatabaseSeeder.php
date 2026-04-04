@@ -7,12 +7,29 @@ use App\Models\Product;
 use App\Models\StockMovement;
 use App\Models\Supplier;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Default Users
+        User::create([
+            'name' => 'Manager Pemilik',
+            'email' => 'admin@test.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin'
+        ]);
+
+        User::create([
+            'name' => 'Kasir Toko',
+            'email' => 'kasir@test.com',
+            'password' => Hash::make('password'),
+            'role' => 'administrator'
+        ]);
+
         $categories = [
             Category::create(['name' => 'Elektronik']),
             Category::create(['name' => 'Pakaian']),
