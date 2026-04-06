@@ -4,128 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Deadstock & Kasir</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { min-height: 100vh; background-color: #343a40; color: white; }
-        .sidebar .nav-link { color: #c2c7d0; padding: 12px 20px; }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active { color: white; background-color: rgba(255,255,255,0.1); }
-        .main-content { min-height: 100vh; padding-top: 20px; }
-    </style>
 </head>
-<body>
-
-<div class="container-fluid p-0">
-    <div class="row g-0">
-        <!-- Sidebar -->
-        <div class="col-md-2 sidebar d-flex flex-column">
-            <div class="p-3 text-center border-bottom border-secondary mb-3">
-                <i class="bi bi-box-seam display-4"></i>
-                <h5 class="mt-2 text-white">Deadstock Sys</h5>
-                <span class="badge bg-primary">{{ strtoupper(auth()->user()->role) }}</span>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+<div class="min-h-screen lg:flex">
+    <aside class="border-r border-slate-800/20 bg-slate-900 text-slate-200 lg:fixed lg:inset-y-0 lg:w-72">
+        <div class="flex h-full flex-col">
+            <div class="border-b border-white/10 px-6 py-8 text-center">
+                <div class="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-white">
+                    <i class="bi bi-box-seam text-3xl"></i>
+                </div>
+                <h1 class="mt-4 text-xl font-bold text-white">Deadstock Sys</h1>
+                <span class="mt-2 inline-flex rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                    {{ strtoupper(auth()->user()->role) }}
+                </span>
             </div>
-            
-            <ul class="nav flex-column mb-auto">
-                <li class="nav-item">
-                    <a href="/" class="nav-link">
-                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                    </a>
-                </li>
-                
+
+            <nav class="flex-1 px-3 py-5">
+                <a href="/" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-speedometer2 text-base"></i>
+                    Dashboard
+                </a>
+
                 @if(auth()->user()->role === 'administrator')
-                <li class="nav-item">
-                    <a href="/sales" class="nav-link">
-                        <i class="bi bi-cart-check me-2"></i> Kasir Penjualan
-                    </a>
-                </li>
+                <a href="/sales" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-cart-check text-base"></i>
+                    Kasir Penjualan
+                </a>
                 @endif
-                
+
                 @if(auth()->user()->role === 'admin')
-                <li class="nav-item">
-                    <a href="/analysis" class="nav-link">
-                        <i class="bi bi-graph-up-arrow me-2"></i> Analisis Restock
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/products" class="nav-link">
-                        <i class="bi bi-boxes me-2"></i> Kelola Master Barang
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/categories" class="nav-link">
-                        <i class="bi bi-tags me-2"></i> Kelola Kategori
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/suppliers" class="nav-link">
-                        <i class="bi bi-truck me-2"></i> Kelola Supplier
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/purchases" class="nav-link">
-                        <i class="bi bi-box-arrow-in-down me-2"></i> Trx Barang Masuk
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/users" class="nav-link">
-                        <i class="bi bi-people me-2"></i> Manajemen Akun
-                    </a>
-                </li>
+                <a href="/analysis" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-graph-up-arrow text-base"></i>
+                    Analisis Restock
+                </a>
+                <a href="/products" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-boxes text-base"></i>
+                    Kelola Master Barang
+                </a>
+                <a href="/categories" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-tags text-base"></i>
+                    Kelola Kategori
+                </a>
+                <a href="/suppliers" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-truck text-base"></i>
+                    Kelola Supplier
+                </a>
+                <a href="/purchases" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-box-arrow-in-down text-base"></i>
+                    Trx Barang Masuk
+                </a>
+                <a href="/users" class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
+                    <i class="bi bi-people text-base"></i>
+                    Manajemen Akun
+                </a>
                 @endif
-            </ul>
-            
-            <div class="p-3 border-top border-secondary">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-person-circle fs-4 me-2"></i>
+            </nav>
+
+            <div class="border-t border-white/10 p-4">
+                <div class="mb-4 flex items-center gap-3 rounded-xl bg-white/5 px-3 py-3">
+                    <i class="bi bi-person-circle text-2xl text-primary"></i>
                     <div>
-                        <strong>{{ auth()->user()->name }}</strong>
+                        <p class="text-sm font-semibold text-white">{{ auth()->user()->name }}</p>
+                        <p class="text-xs text-slate-400">Pengguna aktif</p>
                     </div>
                 </div>
                 <form action="/logout" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">
-                        <i class="bi bi-box-arrow-left"></i> Logout
+                    <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/60 px-4 py-2.5 text-sm font-semibold text-red-200 transition hover:bg-red-500/10 hover:text-white">
+                        <i class="bi bi-box-arrow-left"></i>
+                        Logout
                     </button>
                 </form>
             </div>
         </div>
+    </aside>
 
-        <!-- Main Content -->
-        <div class="col-md-10 main-content">
-            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-4 px-4 d-md-none">
-                <span class="navbar-brand mb-0 h1">Deadstock Sys</span>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="mobileMenu">
-                    <!-- Mobile Menu (simplified for brevity) -->
-                    <form action="/logout" method="POST" class="mt-3">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger w-100">Logout</button>
-                    </form>
+    <div class="flex min-h-screen flex-1 flex-col lg:pl-72">
+        <header class="border-b border-slate-200 bg-white/80 backdrop-blur lg:hidden">
+            <div class="flex items-center justify-between px-4 py-4">
+                <div>
+                    <p class="text-sm font-semibold text-slate-500">Deadstock Sys</p>
+                    <h2 class="text-lg font-bold text-slate-900">Menu</h2>
                 </div>
-            </nav>
+                <form action="/logout" method="POST">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center rounded-lg border border-red-500 px-3 py-2 text-sm font-semibold text-red-600">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </header>
 
-            <div class="container px-4 pb-5">
+        <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+            <div class="mx-auto w-full max-w-7xl">
                 @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show">
+                    <div class="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
                         {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
 
                 @yield('content')
             </div>
-        </div>
+        </main>
     </div>
 </div>
-
-<!-- Bootstrap Bundle JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 @stack('scripts')
 </body>
 </html>
