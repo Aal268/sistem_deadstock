@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800;900&display=swap');
 @import 'tailwindcss';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -12,7 +13,7 @@
 	--color-tertiary: #119da4;
 	--color-accent: #4b6858;
 	--color-info: #d7d9ce;
-
+	
 	--font-sans: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
 		'Segoe UI Symbol', 'Noto Color Emoji';
 }
