@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem Deadstock</title>
+    @include('partials.meta', ['pageTitle' => 'Login'])
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -41,6 +41,9 @@
                 <div class="bg-white px-6 py-10 sm:px-10 lg:px-12 lg:py-12">
                     <div class="mx-auto flex h-full max-w-xl flex-col justify-center">
                         <div class="mb-10 space-y-3">
+                            <div class="mb-6 flex justify-center">
+                                <img src="{{ asset('img/logo-ums-tif.webp') }}" alt="Logo UMS TIF" class="h-12 w-auto">
+                            </div>
                             <p class="text-2xl font-semibold text-primary">Login</p>
                             <h2 class="text-lg font-medium text-slate-900 sm:text-xl">Masukkan kredensial Anda</h2>
                         </div>
