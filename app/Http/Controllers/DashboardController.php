@@ -42,6 +42,19 @@ class DashboardController extends Controller
 
             return view('kasir.dashboard.kasir', compact('totalItemSold', 'chartLabels', 'chartData'));
 
+        } elseif ($user->role === 'gudang') {
+            // Gudang Dashboard: List barang dan info gudang
+            $products = Product::with('category')->get();
+            
+            $totalProducts = $products->count();
+            $totalRemainingStock = $products->sum('current_stock');
+            $criticalStockItems = $products->filter(function($p) {
+                return $p->current_stock <= $p->safety_stock;
+            })->count();
+
+            return view('gudang.dashboard.gudang', compact(
+                'products', 'totalProducts', 'totalRemainingStock', 'criticalStockItems'
+            ));
         } else {
             // Admin Dashboard: Ringkasan stok
             $products = Product::all();

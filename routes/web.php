@@ -28,10 +28,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/histori-sales', [SaleController::class, 'history']);
     });
 
-    // Khusus Admin (Manajer/Owner)
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/analysis', [RestockAnalysisController::class, 'index']);
-        
+    // Khusus Admin dan Gudang untuk Manajemen Data
+    Route::middleware(['role:admin,gudang'])->group(function () {
         Route::get('/purchases', [PurchaseController::class, 'index']);
         Route::post('/purchases', [PurchaseController::class, 'store']);
         
@@ -39,7 +37,12 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('categories', App\Http\Controllers\CategoryController::class)->except(['create', 'show', 'edit', 'update']);
         Route::resource('suppliers', App\Http\Controllers\SupplierController::class)->except(['create', 'show', 'edit', 'update']);
         Route::resource('products', App\Http\Controllers\ProductController::class)->except(['show']);
+    });
 
+    // Khusus Admin (Manajer/Owner)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/analysis', [RestockAnalysisController::class, 'index']);
+        
         // Akun
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);

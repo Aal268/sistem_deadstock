@@ -30,6 +30,13 @@ class DatabaseSeeder extends Seeder
             'role' => 'administrator'
         ]);
 
+        User::create([
+            'name' => 'Staff Gudang',
+            'email' => 'gudang@test.com',
+            'password' => Hash::make('password'),
+            'role' => 'gudang'
+        ]);
+
         $categories = [
             Category::create(['name' => 'Elektronik']),
             Category::create(['name' => 'Pakaian']),

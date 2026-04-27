@@ -44,7 +44,7 @@
                         </a>
                     @endif
 
-                    @if (auth()->user()->role === 'admin')
+                    @if (in_array(auth()->user()->role, ['admin', 'gudang']))
                         <div x-data="{ open: {{ request()->is('products*', 'categories*', 'suppliers*', 'purchases*') ? 'true' : 'false' }} }" class="mb-2">
                             <button @click="open = !open"
                                 class="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
@@ -75,7 +75,9 @@
                                 </a>
                             </div>
                         </div>
+                    @endif
 
+                    @if (auth()->user()->role === 'admin')
                         <a href="/analysis"
                             class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition {{ request()->is('analysis*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
                             <i class="bi bi-graph-up-arrow text-secondary"></i>
