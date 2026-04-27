@@ -65,6 +65,6 @@ class RestockAnalysisController extends Controller
         // Urutkan berdasarkan yang paling urgent (Fast Moving dulu)
         $analysis = $analysis->sortByDesc('suggested_buy');
 
-        return view('analysis.index', compact('analysis'));
+        return view('admin.analysis.index', compact('analysis'));
     }
 }

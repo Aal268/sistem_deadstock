@@ -20,7 +20,7 @@ class SaleController extends Controller
                         ->limit(10)
                         ->get();
 
-        return view('sales.index', compact('products', 'recentSales'));
+        return view('kasir.sales.index', compact('products', 'recentSales'));
     }
 
     public function store(Request $request)
@@ -37,12 +37,17 @@ class SaleController extends Controller
             return back()->with('error', 'Stok tidak mencukupi untuk penjualan ini!');
         }
 
+        // Gabungkan tanggal input dengan waktu sekarang untuk detail timestamp
+        $movementDateTime = Carbon::parse($request->movement_date)->setTimeFrom(now());
+
         // Catat penjualan
         StockMovement::create([
             'product_id' => $product->id,
             'type' => 'out',
+            'status' => 'success',
             'quantity' => $request->quantity,
-            'movement_date' => $request->movement_date,
+            'price_at_transaction' => $product->unit_price,
+            'movement_date' => $movementDateTime,
             'note' => $request->note ?? 'Penjualan oleh Kasir'
         ]);
 
@@ -50,5 +55,22 @@ class SaleController extends Controller
         $product->decrement('current_stock', $request->quantity);
 
         return back()->with('success', 'Transaksi penjualan berhasil dicatat!');
+    }
+
+    public function show(StockMovement $stockMovement)
+    {
+        $stockMovement->load('product.category');
+        return view('kasir.sales.detail-sales', compact('stockMovement'));
+    }
+
+    public function history()
+    {
+        $allSales = StockMovement::with('product.category')
+                        ->where('type', 'out')
+                        ->orderBy('movement_date', 'desc')
+                        ->orderBy('id', 'desc')
+                        ->paginate(20);
+
+        return view('kasir.histori-sales.index', compact('allSales'));
     }
 }
