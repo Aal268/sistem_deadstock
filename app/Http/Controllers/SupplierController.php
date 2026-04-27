@@ -10,7 +10,7 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = Supplier::withCount('products')->get();
-        return view('suppliers.index', compact('suppliers'));
+        return view('admin.suppliers.index', compact('suppliers'));
     }
 
     public function store(Request $request)

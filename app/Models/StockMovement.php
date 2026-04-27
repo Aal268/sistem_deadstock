@@ -10,11 +10,12 @@ class StockMovement extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id', 'type', 'quantity', 'reference_id', 'note', 'movement_date'
+        'product_id', 'type', 'status', 'quantity', 'price_at_transaction', 'reference_id', 'note', 'movement_date'
     ];
 
     protected $casts = [
-        'movement_date' => 'date',
+        'movement_date' => 'datetime',
+        'price_at_transaction' => 'decimal:2',
     ];
 
     public function product()

@@ -18,7 +18,7 @@ class PurchaseController extends Controller
                         ->limit(10)
                         ->get();
 
-        return view('purchases.index', compact('products', 'recentPurchases'));
+        return view('admin.purchases.index', compact('products', 'recentPurchases'));
     }
 
     public function store(Request $request)

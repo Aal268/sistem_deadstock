@@ -24,6 +24,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:administrator'])->group(function () {
         Route::get('/sales', [SaleController::class, 'index']);
         Route::post('/sales', [SaleController::class, 'store']);
+        Route::get('/sales/{stockMovement}', [SaleController::class, 'show'])->name('sales.show');
+        Route::get('/histori-sales', [SaleController::class, 'history']);
     });
 
     // Khusus Admin (Manajer/Owner)
@@ -41,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
         // Akun
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
+        Route::get('/users/{user}/edit', [UserController::class, 'edit']);
         Route::delete('/users/{user}', [UserController::class, 'destroy']);
     });
 });

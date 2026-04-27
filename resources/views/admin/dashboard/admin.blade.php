@@ -36,12 +36,12 @@
 
     <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
         <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
-            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                <i class="fa-solid fa-chart-line text-3xl"></i>
+            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-primary">
+                <i class="bi bi-graph-up-arrow text-3xl"></i>
             </div>
             <h5 class="mt-3 text-xl font-bold text-slate-800">Analisis Restock</h5>
             <p class="mt-1.5 text-sm text-primary">Algoritma analisis velocity barang / deteksi deadstock.</p>
-            <a href="/analysis" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">Lihat Rekomendasi</a>
+            <a href="/analysis" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary">Lihat Rekomendasi</a>
         </div>
 
         <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
@@ -50,7 +50,7 @@
             </div>
             <h5 class="mt-3 text-xl font-bold text-slate-800">Catat Pembelian Masuk</h5>
             <p class="mt-1.5 text-sm text-primary">Update stok barang setelah menerima dari supplier.</p>
-            <a href="/purchases" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700">Form Pembelian</a>
+            <a href="/purchases" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary">Form Pembelian</a>
         </div>
 
         <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
@@ -59,7 +59,7 @@
             </div>
             <h5 class="mt-3 text-xl font-bold text-slate-800">Kelola Akun Karyawan</h5>
             <p class="mt-1.5 text-sm text-primary">Tambah akses login untuk Kasir atau Admin tambahan.</p>
-            <a href="/users" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-slate-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">Manajemen Akun</a>
+            <a href="/users" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">Manajemen Akun</a>
         </div>
     </div>
 </div>

@@ -40,7 +40,7 @@ class DashboardController extends Controller
                 $chartData[] = $soldOnDay;
             }
 
-            return view('dashboard.administrator', compact('totalItemSold', 'chartLabels', 'chartData'));
+            return view('kasir.dashboard.kasir', compact('totalItemSold', 'chartLabels', 'chartData'));
 
         } else {
             // Admin Dashboard: Ringkasan stok
@@ -58,7 +58,7 @@ class DashboardController extends Controller
             $totalSoldAllTime = StockMovement::where('type', 'out')->sum('quantity');
             $totalRemainingStock = $products->sum('current_stock');
 
-            return view('dashboard.admin', compact(
+            return view('admin.dashboard.admin', compact(
                 'totalProducts', 'totalStockValue', 'criticalStockItems', 
                 'totalSoldAllTime', 'totalRemainingStock'
             ));

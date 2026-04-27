@@ -12,14 +12,14 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with(['category', 'supplier'])->get();
-        return view('products.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
 
     public function create()
     {
         $categories = Category::all();
         $suppliers = Supplier::all();
-        return view('products.create', compact('categories', 'suppliers'));
+        return view('admin.products.create', compact('categories', 'suppliers'));
     }
 
     public function store(Request $request)
@@ -58,7 +58,7 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         $suppliers = Supplier::all();
-        return view('products.edit', compact('product', 'categories', 'suppliers'));
+        return view('admin.products.edit', compact('product', 'categories', 'suppliers'));
     }
 
     public function update(Request $request, Product $product)
