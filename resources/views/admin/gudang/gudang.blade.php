@@ -10,7 +10,7 @@
     </div>
 
     <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-        <div class="rounded-xl bg-primary p-4 text-white hover:bg-secondary transition shadow-sm">
+        <div class="rounded-xl bg-primary p-4 text-white transition shadow-sm">
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-sm font-medium text-white/90">Varian Produk</p>
@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <div class="rounded-xl bg-primary p-4 text-white hover:bg-secondary transition shadow-sm">
+        <div class="rounded-xl bg-primary p-4 text-white transition shadow-sm">
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-sm font-medium text-white/90">Sisa Total Stok</p>
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="rounded-xl {{ $criticalStockItems > 0 ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:bg-secondary' }} p-4 text-white transition shadow-sm">
+        <div class="rounded-xl {{ $criticalStockItems > 0 ? 'bg-red-600 hover:bg-red-700' : 'bg-primary' }} p-4 text-white transition shadow-sm">
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-sm font-medium text-white/90">Peringatan Stok Kritis</p>
