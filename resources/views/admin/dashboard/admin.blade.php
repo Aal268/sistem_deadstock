@@ -36,8 +36,8 @@
 
     <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
         <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
-            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-primary">
-                <i class="bi bi-graph-up-arrow text-3xl"></i>
+            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
+                <i class="fa-solid fa-chart-line text-3xl"></i>
             </div>
             <h5 class="mt-3 text-xl font-bold text-slate-800">Analisis Restock</h5>
             <p class="mt-1.5 text-sm text-primary">Algoritma analisis velocity barang / deteksi deadstock.</p>
@@ -45,8 +45,8 @@
         </div>
 
         <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
-            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                <i class="fa-solid fa-box-open text-3xl"></i>
+            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
+                <i class="fa-solid fa-truck-ramp-box text-3xl"></i>
             </div>
             <h5 class="mt-3 text-xl font-bold text-slate-800">Catat Pembelian Masuk</h5>
             <p class="mt-1.5 text-sm text-primary">Update stok barang setelah menerima dari supplier.</p>
@@ -54,8 +54,8 @@
         </div>
 
         <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
-            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-primary">
-                <i class="fa-solid fa-users text-3xl"></i>
+            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
+                <i class="fa-solid fa-users-gear text-3xl "></i>
             </div>
             <h5 class="mt-3 text-xl font-bold text-slate-800">Kelola Akun Karyawan</h5>
             <p class="mt-1.5 text-sm text-primary">Tambah akses login untuk Kasir atau Admin tambahan.</p>

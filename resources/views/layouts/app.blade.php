@@ -27,14 +27,14 @@
                 <nav class="flex-1 px-3 py-5">
                     <a href="/"
                         class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition {{ request()->is('/') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
-                        <i class="bi bi-speedometer2 text-secondary"></i>
+                        <i class="fa-solid fa-gauge text-secondary"></i>
                         Dashboard
                     </a>
 
                     @if (auth()->user()->role === 'administrator')
                         <a href="/sales"
                             class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
-                            <i class="bi bi-cart-check text-secondary"></i>
+                            <i class="fa-solid fa-cart-plus text-secondary"></i>
                             Kasir Penjualan
                         </a>
                         <a href="/histori-sales"
@@ -45,11 +45,11 @@
                     @endif
 
                     @if (in_array(auth()->user()->role, ['admin', 'gudang']))
-                        <div x-data="{ open: {{ request()->is('products*', 'categories*', 'suppliers*', 'purchases*') ? 'true' : 'false' }} }" class="mb-2">
+                        <div x-data="{ open: {{ request()->is('products*', 'categories*', 'suppliers*', 'purchases*', 'gudang*') ? 'true' : 'false' }} }" class="mb-2">
                             <button @click="open = !open"
                                 class="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10 hover:text-white">
                                 <div class="flex items-center gap-3">
-                                    <i class="bi bi-database-gear text-secondary"></i>
+                                    <i class="fa-solid fa-database text-secondary"></i>
                                     <span>Manajemen Data</span>
                                 </div>
                                 <i class="bi transition-transform duration-200"
@@ -59,19 +59,28 @@
                             <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 px-4">
                                 <a href="/products"
                                     class="flex items-center gap-3 rounded-lg py-2 pl-9 text-sm font-medium transition {{ request()->is('products*') ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white' }}">
+                                    <i class="fa-solid fa-box text-secondary"></i>
                                     Kelola Barang
                                 </a>
                                 <a href="/categories"
                                     class="flex items-center gap-3 rounded-lg py-2 pl-9 text-sm font-medium transition {{ request()->is('categories*') ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white' }}">
+                                    <i class="fa-solid fa-tags text-secondary"></i>
                                     Kategori
                                 </a>
                                 <a href="/suppliers"
                                     class="flex items-center gap-3 rounded-lg py-2 pl-9 text-sm font-medium transition {{ request()->is('suppliers*') ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white' }}">
+                                    <i class="fa-solid fa-truck text-secondary"></i>
                                     Supplier
                                 </a>
                                 <a href="/purchases"
                                     class="flex items-center gap-3 rounded-lg py-2 pl-9 text-sm font-medium transition {{ request()->is('purchases*') ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white' }}">
+                                    <i class="fa-solid fa-inbox text-secondary"></i>
                                     Barang Masuk
+                                </a>
+                                <a href="/gudang"
+                                    class="flex items-center gap-3 rounded-lg py-2 pl-9 text-sm font-medium transition {{ request()->is('gudang*') ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white' }}">
+                                    <i class="fa-solid fa-archive text-secondary"></i>
+                                    Gudang
                                 </a>
                             </div>
                         </div>
@@ -80,13 +89,19 @@
                     @if (auth()->user()->role === 'admin')
                         <a href="/analysis"
                             class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition {{ request()->is('analysis*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
-                            <i class="bi bi-graph-up-arrow text-secondary"></i>
+                            <i class="fa-solid fa-chart-line text-secondary"></i>
                             Analisis Restock
+                        </a>
+
+                        <a href="/riwayat"
+                            class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition {{ request()->is('riwayat*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fa-solid fa-clock-rotate-left text-secondary"></i>
+                            Riwayat Penjualan
                         </a>
 
                         <a href="/users"
                             class="mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition {{ request()->is('users*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
-                            <i class="bi bi-people text-secondary"></i>
+                            <i class="fa-solid fa-users-gear text-secondary"></i>
                             Manajemen Akun
                         </a>
                     @endif

@@ -57,7 +57,7 @@ class DashboardController extends Controller
             ));
         } else {
             // Admin Dashboard: Ringkasan stok
-            $products = Product::all();
+            $products = Product::with('stockMovements')->get();
             
             $totalProducts = $products->count();
             $totalStockValue = $products->sum(function($p) {
@@ -67,13 +67,53 @@ class DashboardController extends Controller
                 return $p->current_stock <= $p->safety_stock;
             })->count();
 
+            // Insight: Deadstock Value, Revenue & Profit Bulan Ini
+            $threeMonthsAgo = Carbon::now()->subMonths(3);
+            $startOfMonth = Carbon::now()->startOfMonth();
+            $endOfMonth = Carbon::now()->endOfMonth();
+
+            $deadstockValue = 0;
+            
+            foreach($products as $p) {
+                $salesLast3Months = $p->stockMovements
+                                      ->where('type', 'out')
+                                      ->where('movement_date', '>=', $threeMonthsAgo)
+                                      ->sum('quantity');
+                if($salesLast3Months == 0 && $p->current_stock > 0) {
+                    $deadstockValue += ($p->current_stock * $p->cost_price);
+                }
+            }
+
+            // Sales this month
+            $salesThisMonth = StockMovement::with('product')
+                ->where('type', 'out')
+                ->whereBetween('movement_date', [$startOfMonth, $endOfMonth])
+                ->get();
+
+            $revenueThisMonth = 0;
+            $costThisMonth = 0;
+            
+            foreach($salesThisMonth as $sale) {
+                if($sale->product) {
+                    $qty = $sale->quantity;
+                    $price = $sale->price_at_transaction ?? $sale->product->unit_price;
+                    $cost = $sale->product->cost_price;
+                    
+                    $revenueThisMonth += ($qty * $price);
+                    $costThisMonth += ($qty * $cost);
+                }
+            }
+            
+            $profitThisMonth = $revenueThisMonth - $costThisMonth;
+
             // Total Produk Terjual All time (atau 30 hari terakhir)
             $totalSoldAllTime = StockMovement::where('type', 'out')->sum('quantity');
             $totalRemainingStock = $products->sum('current_stock');
 
             return view('admin.dashboard.admin', compact(
                 'totalProducts', 'totalStockValue', 'criticalStockItems', 
-                'totalSoldAllTime', 'totalRemainingStock'
+                'totalSoldAllTime', 'totalRemainingStock',
+                'deadstockValue', 'revenueThisMonth', 'profitThisMonth'
             ));
         }
     }

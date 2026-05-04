@@ -85,35 +85,11 @@ class DatabaseSeeder extends Seeder
             'unit_price' => 12000
         ]);
 
-        // Seeding Stock Movements (Last 3 months)
+        // Seeding Stock Movements
         $now = Carbon::now();
 
-        // 1. Fast Moving (High sales)
-        for ($i = 0; $i < 30; $i++) {
-            StockMovement::create([
-                'product_id' => $p1->id,
-                'type' => 'out',
-                'quantity' => rand(5, 15), // Total terjual banyak
-                'movement_date' => $now->copy()->subDays(rand(1, 90)),
-                'note' => 'Penjualan'
-            ]);
-        }
-
-        // 2. Slow Moving (Low sales)
-        for ($i = 0; $i < 5; $i++) {
-            StockMovement::create([
-                'product_id' => $p2->id,
-                'type' => 'out',
-                'quantity' => rand(1, 3), // Total terjual sedikit
-                'movement_date' => $now->copy()->subDays(rand(1, 90)),
-                'note' => 'Penjualan'
-            ]);
-        }
-
-        // 3. Deadstock (No sales in last 3 months)
-        // No 'out' movements created
-        
-        // Buat data masuk (In) awal untuk logikanya
+        // Tidak membuat data dummy penjualan (type: out)
+        // Hanya buat data stok awal (type: in)
         StockMovement::create(['product_id' => $p1->id, 'type' => 'in', 'quantity' => 200, 'movement_date' => $now->copy()->subDays(95), 'note' => 'Stok Awal']);
         StockMovement::create(['product_id' => $p2->id, 'type' => 'in', 'quantity' => 160, 'movement_date' => $now->copy()->subDays(95), 'note' => 'Stok Awal']);
         StockMovement::create(['product_id' => $p3->id, 'type' => 'in', 'quantity' => 300, 'movement_date' => $now->copy()->subDays(95), 'note' => 'Stok Awal']);

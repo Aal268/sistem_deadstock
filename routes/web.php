@@ -20,11 +20,15 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard untuk semua role yang login
     Route::get('/', [DashboardController::class, 'index']);
 
+    // Detail Penjualan (Bisa diakses Admin & Kasir)
+    Route::middleware(['role:admin,administrator'])->group(function () {
+        Route::get('/sales/{stockMovement}', [SaleController::class, 'show'])->name('sales.show');
+    });
+
     // Khusus Administrator (Kasir)
     Route::middleware(['role:administrator'])->group(function () {
         Route::get('/sales', [SaleController::class, 'index']);
         Route::post('/sales', [SaleController::class, 'store']);
-        Route::get('/sales/{stockMovement}', [SaleController::class, 'show'])->name('sales.show');
         Route::get('/histori-sales', [SaleController::class, 'history']);
     });
 
@@ -32,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin,gudang'])->group(function () {
         Route::get('/purchases', [PurchaseController::class, 'index']);
         Route::post('/purchases', [PurchaseController::class, 'store']);
+        Route::get('/gudang', [App\Http\Controllers\GudangController::class, 'index']);
         
         // Master Data CRUD
         Route::resource('categories', App\Http\Controllers\CategoryController::class)->except(['create', 'show', 'edit', 'update']);
@@ -42,6 +47,9 @@ Route::middleware(['auth'])->group(function () {
     // Khusus Admin (Manajer/Owner)
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/analysis', [RestockAnalysisController::class, 'index']);
+        Route::get('/riwayat', [SaleController::class, 'adminHistory']);
+        Route::get('/riwayat/{stockMovement}/edit', [SaleController::class, 'edit'])->name('riwayat.edit');
+        Route::put('/riwayat/{stockMovement}', [SaleController::class, 'update'])->name('riwayat.update');
         
         // Akun
         Route::get('/users', [UserController::class, 'index']);

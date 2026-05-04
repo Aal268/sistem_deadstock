@@ -44,9 +44,10 @@
             <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden h-full">
                 <div class="border-b border-slate-100 bg-white px-6 py-5">
                     <div class="flex items-center gap-3">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-secondary">
+                        {{-- <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-secondary">
                             <i class="bi bi-graph-up-arrow"></i>
-                        </div>
+                        </div> --}}
+                        <i class="bi bi-graph-up-arrow text-secondary text-xl"></i>
                         <h5 class="font-bold text-slate-800">Grafik Penjualan Harian</h5>
                     </div>
                 </div>

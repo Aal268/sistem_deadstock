@@ -108,17 +108,17 @@
         }
 
         /* Clear button - disabled */
-        /* 
-        .ts-wrapper .clear-button {
-            color: #94a3b8 !important;
-            font-size: 1.1rem !important;
-            opacity: 1 !important;
-            transition: color 0.15s;
-        }
-        .ts-wrapper .clear-button:hover {
-            color: #ef4444 !important;
-        } 
-        */
+        /*
+            .ts-wrapper .clear-button {
+                color: #94a3b8 !important;
+                font-size: 1.1rem !important;
+                opacity: 1 !important;
+                transition: color 0.15s;
+            }
+            .ts-wrapper .clear-button:hover {
+                color: #ef4444 !important;
+            }
+            */
 
         /* Sembunyikan panah dropdown agar benar-benar terlihat seperti search field */
         .ts-wrapper .ts-control::after {
@@ -319,17 +319,19 @@
             const formatRupiah = (n) => new Intl.NumberFormat('id-ID').format(n);
 
             // Ambil data produk langsung dari variabel PHP ke JS
-            const productData = {!! $products->mapWithKeys(fn($p) => [
-                $p->id => [
-                    'id'       => $p->id,
-                    'price'    => (int) $p->unit_price,
-                    'stock'    => (int) $p->current_stock,
-                    'category' => $p->category->name ?? '-',
-                    'sku'      => $p->sku,
-                    'name'     => $p->name,
-                    'text'     => $p->sku . ' - ' . $p->name
-                ]
-            ])->toJson() !!};
+            const productData = {!! $products->mapWithKeys(
+                    fn($p) => [
+                        $p->id => [
+                            'id' => $p->id,
+                            'price' => (int) $p->unit_price,
+                            'stock' => (int) $p->current_stock,
+                            'category' => $p->category->name ?? '-',
+                            'sku' => $p->sku,
+                            'name' => $p->name,
+                            'text' => $p->sku . ' - ' . $p->name,
+                        ],
+                    ],
+                )->toJson() !!};
 
             // Konversi ke array untuk Tom Select options
             const productOptions = Object.values(productData);
@@ -377,11 +379,11 @@
                 // plugins     : ['clear_button'],
                 render: {
                     option: function(data, escape) {
-                        const raw = productData[data.value];
-                        const sku = raw ? escape(raw.sku) : '';
-                        const name = raw ? escape(raw.name) : escape(data.text);
-                        const stock = raw ? raw.stock : 0;
+                        const sku = escape(data.sku || '');
+                        const name = escape(data.name || data.text || '');
+                        const stock = parseInt(data.stock) || 0;
                         const stockColor = stock < 5 ? '#ef4444' : '#10b981';
+
 
                         return `
                             <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">

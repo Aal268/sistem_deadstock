@@ -9,9 +9,7 @@ class StockMovement extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'product_id', 'type', 'status', 'quantity', 'price_at_transaction', 'reference_id', 'note', 'movement_date'
-    ];
+    protected $fillable = ['product_id', 'type', 'status', 'quantity', 'price_at_transaction', 'reference_id', 'note', 'movement_date', 'user_id'];
 
     protected $casts = [
         'movement_date' => 'datetime',
@@ -21,5 +19,10 @@ class StockMovement extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
