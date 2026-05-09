@@ -19,6 +19,15 @@ class GudangController extends Controller
             return $p->current_stock <= $p->safety_stock;
         })->count();
 
-        return view('admin.gudang.gudang', compact('products', 'totalProducts', 'totalRemainingStock', 'criticalStockItems'));
+        // Tambahan info Manajemen Data
+        $totalCategories = \App\Models\Category::count();
+        $totalSuppliers = \App\Models\Supplier::count();
+
+        return view('gudang.dashboard.gudang', compact(
+            'products', 'totalProducts', 'totalRemainingStock', 'criticalStockItems',
+            'totalCategories', 'totalSuppliers'
+        ));
     }
+
+
 }

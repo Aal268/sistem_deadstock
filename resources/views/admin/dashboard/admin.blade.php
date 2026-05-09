@@ -1,66 +1,252 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-5 font-sans">
-    <div>
-        <h2 class="text-3xl font-black tracking-tight text-[#13505B]">Dashboard Admin</h2>
-        <p class="mt-1 text-sm font-medium text-slate-500">Ringkasan inventaris dan performa gudang.</p>
-    </div>
-
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div class="rounded-xl bg-primary p-4 text-white">
-            <p class="text-sm font-medium text-white/90">Varian Produk</p>
-            <p class="mt-1.5 text-4xl font-black leading-none">{{ $totalProducts }}</p>
+<div class="space-y-6 font-sans pb-10">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h2 class="text-3xl font-black tracking-tight text-[#13505B]">Dashboard Utama</h2>
+            <p class="mt-1 text-sm font-medium text-slate-500">Wawasan algoritma dan performa inventaris terkini.</p>
         </div>
-
-        <div class="rounded-xl bg-primary p-4 text-white">
-            <p class="text-sm font-medium text-white/90">Sisa Total Stok</p>
-            <p class="mt-1.5 text-4xl font-black leading-none">{{ $totalRemainingStock }} <span class="ml-1 text-lg font-bold">Pcs</span></p>
-        </div>
-
-        <div class="rounded-xl bg-primary p-4 text-white">
-            <p class="text-sm font-medium text-white/90">Total Terjual</p>
-            <p class="mt-1.5 text-4xl font-black leading-none">{{ $totalSoldAllTime }} <span class="ml-1 text-lg font-bold">Pcs</span></p>
-        </div>
-
-        <div class="rounded-xl bg-primary p-4 text-white">
-            <p class="text-sm font-medium text-white/90">Stok Kritis</p>
-            <p class="mt-1.5 text-4xl font-black leading-none">{{ $criticalStockItems }} <span class="ml-1 text-lg font-bold">Item</span></p>
+        <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-info shadow-sm">
+            <i class="fa-solid fa-calendar-day text-primary"></i>
+            <span class="text-sm font-bold text-slate-700">{{ now()->translatedFormat('d F Y') }}</span>
         </div>
     </div>
 
-    <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm mt-3 mb-3">
-        <p class="text-xl font-semibold text-primary">Nilai Kapasitas Stok Terkini</p>
-        <h1 class="mt-1.5 text-5xl font-black tracking-tight text-secondary">Rp {{ number_format($totalStockValue, 0, ',', '.') }}</h1>
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-2xl bg-primary p-5 text-white shadow-lg shadow-primary/20 relative overflow-hidden">
+            <div class="relative z-10">
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Varian Produk</p>
+                <p class="mt-2 text-4xl font-black">{{ $totalProducts }}</p>
+                <p class="mt-1 text-xs text-white/60">Terdaftar di sistem</p>
+            </div>
+            <i class="fa-solid fa-box absolute -right-4 -bottom-4 text-7xl text-white/10"></i>
+        </div>
+
+        <div class="rounded-2xl bg-[#13505B] p-5 text-white shadow-lg shadow-[#13505B]/20 relative overflow-hidden">
+            <div class="relative z-10">
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Sisa Stok Total</p>
+                <p class="mt-2 text-4xl font-black">{{ number_format($totalRemainingStock, 0, ',', '.') }} <span class="text-lg font-medium">Pcs</span></p>
+                <p class="mt-1 text-xs text-white/60">Ketersediaan fisik</p>
+            </div>
+            <i class="fa-solid fa-warehouse absolute -right-4 -bottom-4 text-7xl text-white/10"></i>
+        </div>
+
+        <div class="rounded-2xl bg-secondary p-5 text-white shadow-lg shadow-secondary/20 relative overflow-hidden">
+            <div class="relative z-10">
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Prioritas Beli</p>
+                <p class="mt-2 text-4xl font-black">{{ $priorityBuyCount }} <span class="text-lg font-medium">Item</span></p>
+                <p class="mt-1 text-xs text-white/60">Berdasarkan velocity</p>
+            </div>
+            <i class="fa-solid fa-cart-shopping absolute -right-4 -bottom-4 text-7xl text-white/10"></i>
+        </div>
+
+        <div class="rounded-2xl bg-danger p-5 text-white shadow-lg shadow-danger/20 relative overflow-hidden">
+            <div class="relative z-10">
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Stok Kritis</p>
+                <p class="mt-2 text-4xl font-black">{{ $criticalStockItems }} <span class="text-lg font-medium">Item</span></p>
+                <p class="mt-1 text-xs text-white/60">Segera restock</p>
+            </div>
+            <i class="fa-solid fa-triangle-exclamation absolute -right-4 -bottom-4 text-7xl text-white/10"></i>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
-        <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
-            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
-                <i class="fa-solid fa-chart-line text-3xl"></i>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Sales Chart -->
+        <div class="lg:col-span-2 rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
+            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-primary"></i>
+                    <h3 class="font-bold text-slate-800">Pelacakan Penjualan Harian</h3>
+                </div>
+                <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">Bulan Ini</span>
             </div>
-            <h5 class="mt-3 text-xl font-bold text-slate-800">Analisis Restock</h5>
-            <p class="mt-1.5 text-sm text-primary">Algoritma analisis velocity barang / deteksi deadstock.</p>
-            <a href="/analysis" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary">Lihat Rekomendasi</a>
+            <div class="p-6">
+                <div class="h-[300px] relative">
+                    <canvas id="adminSalesChart"></canvas>
+                </div>
+            </div>
         </div>
 
-        <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
-            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
-                <i class="fa-solid fa-truck-ramp-box text-3xl"></i>
+        <!-- Top 3 Performers -->
+        <div class="rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
+            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-crown text-warning"></i>
+                    <h3 class="font-bold text-slate-800">Top 3 Rata-rata Tertinggi</h3>
+                </div>
             </div>
-            <h5 class="mt-3 text-xl font-bold text-slate-800">Catat Pembelian Masuk</h5>
-            <p class="mt-1.5 text-sm text-primary">Update stok barang setelah menerima dari supplier.</p>
-            <a href="/purchases" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary">Form Pembelian</a>
+            <div class="p-4 space-y-4">
+                @forelse($top3Products as $item)
+                <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black">
+                        {{ $loop->iteration }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 truncate">{{ $item['product']->name }}</p>
+                        <p class="text-xs text-slate-500">{{ $item['product']->category->name ?? '-' }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black text-secondary">{{ $item['avg_monthly_sales'] }}</p>
+                        <p class="text-[10px] uppercase font-bold text-slate-400">Pcs/Bulan</p>
+                    </div>
+                </div>
+                @empty
+                <p class="text-center py-10 text-sm text-slate-400">Data belum tersedia</p>
+                @endforelse
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+                <p class="text-[10px] text-center text-slate-400 font-medium italic">*Berdasarkan rata-rata penjualan 3 bulan terakhir</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Urgent Highlights -->
+        <div class="rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
+            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bolt-lightning text-danger"></i>
+                    <h3 class="font-bold text-slate-800">Status Urgent & Rekomendasi</h3>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500">
+                        <tr>
+                            <th class="px-6 py-3">Barang</th>
+                            <th class="px-6 py-3">Stok</th>
+                            <th class="px-6 py-3">Status</th>
+                            <th class="px-6 py-3 text-right">Rekomendasi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        @forelse($urgentItems as $item)
+                        <tr class="hover:bg-slate-50/50 transition">
+                            <td class="px-6 py-4">
+                                <p class="font-bold text-slate-800">{{ $item['product']->name }}</p>
+                                <p class="text-[10px] text-slate-400">SKU: {{ $item['product']->sku }}</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="font-black text-slate-700">{{ $item['product']->current_stock }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                @if($item['status'] == 'Deadstock')
+                                    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger">DEADSTOCK</span>
+                                @else
+                                    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-success/10 text-success">FAST-MOVING</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                @if($item['status'] == 'Deadstock')
+                                    <span class="text-xs font-bold text-danger">Obral / Promo</span>
+                                @else
+                                    <span class="text-xs font-bold text-primary">Beli +{{ $item['suggested_buy'] }} Pcs</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-10 text-center text-slate-400">Tidak ada item urgent saat ini</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="rounded-xl border border-info bg-white p-5 text-center shadow-sm">
-            <div class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white">
-                <i class="fa-solid fa-users-gear text-3xl "></i>
+        <!-- Quick Actions & Capacity -->
+        <div class="space-y-6">
+            <div class="rounded-2xl border-2 border-dashed border-info p-6 text-center bg-white">
+                <p class="text-sm font-bold text-primary">Estimasi Nilai Stok Saat Ini</p>
+                <h1 class="mt-2 text-4xl font-black tracking-tight text-secondary">Rp {{ number_format($totalStockValue, 0, ',', '.') }}</h1>
             </div>
-            <h5 class="mt-3 text-xl font-bold text-slate-800">Kelola Akun Karyawan</h5>
-            <p class="mt-1.5 text-sm text-primary">Tambah akses login untuk Kasir atau Admin tambahan.</p>
-            <a href="/users" class="mt-3 inline-flex w-full items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">Manajemen Akun</a>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="/analysis" class="group p-4 rounded-2xl border border-info bg-white hover:bg-primary transition shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-primary/10 group-hover:bg-white/20 flex items-center justify-center text-primary group-hover:text-white transition">
+                            <i class="fa-solid fa-magnifying-glass-chart text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800 group-hover:text-white transition">Detail Analisis</p>
+                            <p class="text-[10px] text-slate-500 group-hover:text-white/70 transition">Lihat semua rekomendasi</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="/purchases" class="group p-4 rounded-2xl border border-info bg-white hover:bg-secondary transition shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-secondary/10 group-hover:bg-white/20 flex items-center justify-center text-secondary group-hover:text-white transition">
+                            <i class="fa-solid fa-truck-loading text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800 group-hover:text-white transition">Input Pembelian</p>
+                            <p class="text-[10px] text-slate-500 group-hover:text-white/70 transition">Catat stok masuk</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('adminSalesChart').getContext('2d');
+        const adminSalesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode($chartLabels) !!},
+                datasets: [{
+                    label: 'Produk Terjual (Pcs)',
+                    data: {!! json_encode($chartData) !!},
+                    backgroundColor: 'rgba(12, 116, 137, 0.1)',
+                    borderColor: 'rgba(12, 116, 137, 1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: 'rgba(12, 116, 137, 1)',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        },
+                        grid: {
+                            display: true,
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+@endpush
+

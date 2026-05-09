@@ -48,6 +48,7 @@
                         <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500">Role / Hak Akses</label>
                         <select name="role" class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm transition focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/10" required>
                             <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin (Manajer)</option>
+                            <option value="gudang" {{ old('role', $user->role) === 'gudang' ? 'selected' : '' }}>Tim Gudang / Inventory</option>
                             <option value="administrator" {{ old('role', $user->role) === 'administrator' ? 'selected' : '' }}>Administrator (Kasir)</option>
                         </select>
                     </div>

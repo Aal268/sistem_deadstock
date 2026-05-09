@@ -38,6 +38,7 @@
                         <label class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-500">Tipe Akun (Role)</label>
                         <select name="role" class="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm transition focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/10" required>
                             <option value="administrator">Kasir / Administrator</option>
+                            <option value="gudang">Tim Gudang / Inventory</option>
                             <option value="admin">Manajer / Admin Owner</option>
                         </select>
                     </div>
@@ -81,6 +82,8 @@
                             <td class="px-6 py-4">
                                 @if($user->role === 'admin')
                                     <span class="inline-flex rounded-lg bg-red-50 px-2.5 py-1 text-xs font-bold text-red-700">Admin (Manajer)</span>
+                                @elseif($user->role === 'gudang')
+                                    <span class="inline-flex rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">Tim Gudang</span>
                                 @else
                                     <span class="inline-flex rounded-lg bg-cyan-50 px-2.5 py-1 text-xs font-bold text-cyan-700">Administrator (Kasir)</span>
                                 @endif
