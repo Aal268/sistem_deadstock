@@ -56,12 +56,26 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Sales Chart -->
         <div class="lg:col-span-2 rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
-            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex items-center justify-between">
+            <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-chart-line text-primary"></i>
-                    <h3 class="font-bold text-slate-800">Pelacakan Penjualan Harian</h3>
+                    <h3 class="font-bold text-slate-800" id="chartTitle">Pelacakan Penjualan Harian</h3>
                 </div>
-                <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">Bulan Ini</span>
+                
+                <div class="flex flex-wrap items-center gap-2">
+                    <div id="decadeNav" class="hidden items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5">
+                        <button id="prevDecade" class="px-2 py-1 text-slate-500 hover:text-primary hover:bg-slate-50 rounded shadow-sm text-xs transition"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span id="decadeLabel" class="text-xs font-bold px-2 text-slate-700">2020 - 2029</span>
+                        <button id="nextDecade" class="px-2 py-1 text-slate-500 hover:text-primary hover:bg-slate-50 rounded shadow-sm text-xs transition"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+
+                    <select id="salesFilter" class="text-xs font-bold text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer">
+                        <option value="today">Hari Ini</option>
+                        <option value="month" selected>Bulan Ini</option>
+                        <option value="year">Tahun Ini</option>
+                        <option value="decade">Dekade</option>
+                    </select>
+                </div>
             </div>
             <div class="p-6">
                 <div class="h-[300px] relative">
@@ -198,54 +212,110 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('adminSalesChart').getContext('2d');
-        const adminSalesChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($chartLabels) !!},
-                datasets: [{
-                    label: 'Produk Terjual (Pcs)',
-                    data: {!! json_encode($chartData) !!},
-                    backgroundColor: 'rgba(12, 116, 137, 0.1)',
-                    borderColor: 'rgba(12, 116, 137, 1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: 'rgba(12, 116, 137, 1)',
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
+        let adminSalesChart = null;
+
+        const filterSelect = document.getElementById('salesFilter');
+        const decadeNav = document.getElementById('decadeNav');
+        const decadeLabel = document.getElementById('decadeLabel');
+        const prevDecadeBtn = document.getElementById('prevDecade');
+        const nextDecadeBtn = document.getElementById('nextDecade');
+        const chartTitle = document.getElementById('chartTitle');
+
+        let currentDecadeYear = new Date().getFullYear();
+
+        function createChart(labels, data, type) {
+            if (adminSalesChart) {
+                adminSalesChart.destroy();
+            }
+
+            adminSalesChart = new Chart(ctx, {
+                type: type || 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Produk Terjual (Pcs)',
+                        data: data,
+                        backgroundColor: 'rgba(12, 116, 137, 0.1)',
+                        borderColor: 'rgba(12, 116, 137, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(12, 116, 137, 1)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        borderRadius: type === 'bar' ? 4 : 0
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        },
-                        grid: {
-                            display: true,
-                            color: 'rgba(0,0,0,0.05)'
-                        }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
                     },
-                    x: {
-                        grid: {
-                            display: false
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { display: true, color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
                         }
                     }
                 }
+            });
+        }
+
+        function fetchChartData() {
+            const period = filterSelect.value;
+            let url = `/dashboard/chart-data?period=${period}`;
+            
+            if (period === 'decade') {
+                url += `&year=${currentDecadeYear}`;
             }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    createChart(data.labels, data.data, data.chartType);
+                    
+                    if (data.title) {
+                        chartTitle.innerText = data.title;
+                    }
+
+                    if (period === 'decade') {
+                        decadeNav.classList.remove('hidden');
+                        decadeNav.classList.add('flex');
+                        const start = currentDecadeYear - (currentDecadeYear % 10);
+                        decadeLabel.innerText = `${start} - ${start + 9}`;
+                    } else {
+                        decadeNav.classList.add('hidden');
+                        decadeNav.classList.remove('flex');
+                    }
+                })
+                .catch(err => console.error("Error fetching chart data:", err));
+        }
+
+        filterSelect.addEventListener('change', () => {
+            if (filterSelect.value === 'decade') {
+                currentDecadeYear = new Date().getFullYear(); // Reset ke tahun saat ini jika dekade dipilih
+            }
+            fetchChartData();
         });
+
+        prevDecadeBtn.addEventListener('click', () => {
+            currentDecadeYear -= 10;
+            fetchChartData();
+        });
+
+        nextDecadeBtn.addEventListener('click', () => {
+            currentDecadeYear += 10;
+            fetchChartData();
+        });
+
+        // Load data pertama kali sesuai default filter (Bulan Ini)
+        fetchChartData();
     });
 </script>
 @endpush
