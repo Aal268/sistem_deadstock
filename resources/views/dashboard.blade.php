@@ -18,7 +18,7 @@
             <p class="mt-3 text-3xl font-black leading-tight">Rp {{ number_format($totalStockValue, 0, ',', '.') }}</p>
         </div>
 
-        <div class="rounded-2xl bg-gradient-to-br from-amber-200 to-orange-300 p-6 text-slate-900 shadow-lg shadow-amber-500/20">
+        <div class="rounded-2xl bg-gradient-to-br from-amber-200 to-orange-300 p-6 text-slate-900 shadow-lg shadow-amber-500/20" style="background: #B76E79">
             <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-700">Stok Kritis</h3>
             <p class="mt-3 text-5xl font-black leading-none">{{ $criticalStockItems }} <span class="align-middle text-base font-semibold text-slate-700">Item</span></p>
         </div>

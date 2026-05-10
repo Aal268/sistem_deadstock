@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="rounded-xl {{ $criticalStockItems > 0 ? 'bg-red-600 hover:bg-red-700' : 'bg-primary' }} p-4 text-white transition shadow-sm">
+        <div class="rounded-xl {{ $criticalStockItems > 0 ? 'bg-red-600 hover:bg-red-700' : 'bg-primary' }} p-4 text-white transition shadow-sm" style="background: #B76E79">
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-sm font-medium text-white/90">Peringatan Stok Kritis</p>

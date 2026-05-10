@@ -40,7 +40,7 @@
             <i class="fa-solid fa-truck-field absolute -right-4 -bottom-4 text-7xl text-white/10"></i>
         </div>
 
-        <div class="rounded-2xl bg-danger p-5 text-white shadow-lg shadow-danger/20 relative overflow-hidden">
+        <div class="rounded-2xl bg-danger p-5 text-white shadow-lg shadow-danger/20 relative overflow-hidden" style="background: #B76E79">
             <div class="relative z-10">
                 <p class="text-xs font-bold uppercase tracking-wider text-white/80">Stok Kritis</p>
                 <p class="mt-2 text-4xl font-black">{{ $criticalStockItems }} <span class="text-lg font-medium">Item</span></p>
