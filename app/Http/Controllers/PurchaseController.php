@@ -8,15 +8,32 @@ use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        $recentPurchases = StockMovement::with('product')
-                        ->where('type', 'in')
-                        ->orderBy('movement_date', 'desc')
+        $products = Product::orderBy('name')->get();
+        
+        $query = StockMovement::with('product')->where('type', 'in');
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('movement_date', '>=', $request->start_date);
+        }
+        
+        if ($request->filled('end_date')) {
+            $query->whereDate('movement_date', '<=', $request->end_date);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('product', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        $recentPurchases = $query->orderBy('movement_date', 'desc')
                         ->orderBy('id', 'desc')
-                        ->limit(10)
-                        ->get();
+                        ->paginate(20)
+                        ->withQueryString();
 
         return view('admin.purchases.index', compact('products', 'recentPurchases'));
     }

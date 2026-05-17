@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::withCount('products')->get();
+        $query = Category::withCount('products');
+        
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $categories = $query->orderBy('name')->get();
         return view('admin.categories.index', compact('categories'));
     }
 

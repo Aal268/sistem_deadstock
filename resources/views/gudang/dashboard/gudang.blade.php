@@ -111,14 +111,51 @@
     </div>
 
     <!-- Critical Inventory Table -->
+    <!-- Inventory Table -->
     <div class="rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
-        <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex items-center justify-between">
+        <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-2">
-                <i class="fa-solid fa-triangle-exclamation text-danger"></i>
-                <h3 class="font-bold text-slate-800">Daftar Stok Kritis</h3>
+                <i class="fa-solid fa-boxes-stacked text-[#13505B]"></i>
+                <h3 class="font-bold text-slate-800">Daftar Inventaris Gudang</h3>
             </div>
-            <span class="text-[10px] font-bold text-danger bg-danger/10 px-2 py-1 rounded">Perlu Perhatian</span>
+            <span class="text-[10px] font-bold text-[#13505B] bg-[#13505B]/10 px-2 py-1 rounded">Katalog & Stok</span>
         </div>
+
+        <!-- Filter Box -->
+        <form method="GET" action="/gudang" class="border-b border-slate-100 bg-slate-50/50 p-5 flex flex-wrap items-end gap-3">
+            <div class="flex-1 min-w-[140px]">
+                <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Pencarian</label>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="SKU/Nama..." class="w-full rounded-xl border border-primary px-3 py-2 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+            </div>
+            <div class="flex-1 min-w-[130px]">
+                <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Filter Kategori</label>
+                <select name="category_id" class="w-full rounded-xl border border-primary px-3 py-2 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categories as $c)
+                        <option value="{{ $c->id }}" {{ request('category_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex-1 min-w-[130px]">
+                <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Status Stok</label>
+                <select name="stock_status" class="w-full rounded-xl border border-primary px-3 py-2 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+                    <option value="">Semua Status</option>
+                    <option value="kritis" {{ request('stock_status') == 'kritis' ? 'selected' : '' }}>Stok Kritis / Habis</option>
+                    <option value="aman" {{ request('stock_status') == 'aman' ? 'selected' : '' }}>Stok Aman</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="submit" class="inline-flex h-[42px] items-center justify-center gap-2 rounded-xl bg-secondary px-4 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
+                    <i class="bi bi-funnel"></i> Filter
+                </button>
+                @if(request()->anyFilled(['search', 'category_id', 'stock_status']))
+                    <a href="/gudang" class="inline-flex h-[42px] items-center justify-center rounded-xl bg-slate-200 px-3 text-sm font-bold text-slate-600 transition hover:bg-slate-300">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500">
@@ -131,10 +168,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-sm">
-                    @php
-                        $criticalItems = $products->filter(fn($p) => $p->current_stock <= $p->safety_stock)->take(10);
-                    @endphp
-                    @forelse($criticalItems as $p)
+                    @forelse($products as $p)
                     <tr class="hover:bg-slate-50/50 transition">
                         <td class="px-6 py-4">
                             <p class="font-bold text-slate-800">{{ $p->name }}</p>
@@ -143,7 +177,7 @@
                         <td class="px-6 py-4 text-slate-500">
                             {{ $p->category->name ?? '-' }}
                         </td>
-                        <td class="px-6 py-4 text-center font-black text-danger">
+                        <td class="px-6 py-4 text-center font-black {{ $p->current_stock <= $p->safety_stock ? 'text-danger' : 'text-emerald-600' }}">
                             {{ $p->current_stock }}
                         </td>
                         <td class="px-6 py-4 text-center text-slate-400 font-medium">
@@ -152,25 +186,26 @@
                         <td class="px-6 py-4 text-right">
                             @if($p->current_stock == 0)
                                 <span class="px-2 py-1 rounded-lg text-[10px] font-bold bg-danger text-white">HABIS TOTAL</span>
-                            @else
+                            @elseif($p->current_stock <= $p->safety_stock)
                                 <span class="px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-500 text-white">KRITIS</span>
+                            @else
+                                <span class="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-500 text-white">AMAN</span>
                             @endif
                         </td>
                     </tr>
                     @empty
                     <tr>
                         <td colspan="5" class="px-6 py-10 text-center text-slate-400 italic">
-                            <i class="fa-solid fa-check-circle text-success mr-2"></i>
-                            Semua stok dalam kondisi aman.
+                            Belum ada data barang yang sesuai.
                         </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        @if($criticalItems->count() > 0)
-        <div class="px-6 py-3 bg-slate-50 border-t border-slate-100 text-center text-[10px] text-slate-400">
-            Hanya menampilkan 10 item paling kritis
+        @if($products->hasPages())
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100">
+            {{ $products->links() }}
         </div>
         @endif
     </div>

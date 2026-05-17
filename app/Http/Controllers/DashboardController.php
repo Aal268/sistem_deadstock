@@ -49,32 +49,8 @@ class DashboardController extends Controller
                 compact("totalItemSold", "chartLabels", "chartData"),
             );
         } elseif ($user->role === "gudang") {
-            // Gudang Dashboard: List barang dan info gudang
-            $products = Product::with("category")->get();
-
-            $totalProducts = $products->count();
-            $totalRemainingStock = $products->sum("current_stock");
-            $criticalStockItems = $products
-                ->filter(function ($p) {
-                    return $p->current_stock <= $p->safety_stock;
-                })
-                ->count();
-
-            // Tambahan info Manajemen Data
-            $totalCategories = \App\Models\Category::count();
-            $totalSuppliers = \App\Models\Supplier::count();
-
-            return view(
-                "gudang.dashboard.gudang",
-                compact(
-                    "products",
-                    "totalProducts",
-                    "totalRemainingStock",
-                    "criticalStockItems",
-                    "totalCategories",
-                    "totalSuppliers",
-                ),
-            );
+            // Gudang Dashboard: Menggunakan GudangController agar sinkron dengan filter dan paginasi
+            return app(\App\Http\Controllers\GudangController::class)->index(request());
         } elseif ($user->role === "admin") {
             // Admin Dashboard: Ringkasan stok & Analisis mendalam
             $products = Product::with("stockMovements")->get();
@@ -95,7 +71,7 @@ class DashboardController extends Controller
                     ->where("movement_date", ">=", $threeMonthsAgo)
                     ->sum("quantity");
 
-                $avgMonthlySales = round($totalOutLast3Months / 3, 2);
+                $avgMonthlySales = round($totalOutLast3Months / 3);
 
                 // Logika Status (Sesuai algoritma yang ada)
                 $status = "Normal";

@@ -54,8 +54,25 @@
     <!-- Tabel Daftar User -->
     <div class="lg:col-span-8">
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <div class="border-b border-slate-100 bg-white px-6 py-4">
+            <div class="border-b border-slate-100 bg-white px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h5 class="font-bold text-slate-800">Daftar Pengguna Sistem</h5>
+                <form method="GET" action="/users" class="flex flex-wrap items-center gap-2">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama/email..." class="rounded-xl border border-primary px-3 py-1.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+                    <select name="role" class="rounded-xl border border-primary px-3 py-1.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+                        <option value="">Semua Role</option>
+                        <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin (Manajer)</option>
+                        <option value="administrator" {{ request('role') == 'administrator' ? 'selected' : '' }}>Administrator (Kasir)</option>
+                        <option value="gudang" {{ request('role') == 'gudang' ? 'selected' : '' }}>Tim Gudang</option>
+                    </select>
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-secondary px-3 py-1.5 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
+                        <i class="bi bi-search"></i>
+                    </button>
+                    @if(request()->anyFilled(['search', 'role']))
+                        <a href="/users" class="inline-flex items-center justify-center rounded-xl bg-slate-200 px-3 py-1.5 text-sm font-bold text-slate-600 transition hover:bg-slate-300">
+                            Reset
+                        </a>
+                    @endif
+                </form>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">

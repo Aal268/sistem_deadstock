@@ -10,16 +10,24 @@ use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $products = Product::with('category')->where('current_stock', '>', 0)->get();
-        // Load riwayat penjualan terbaru
-        $recentSales = StockMovement::with('product', 'user')
-                        ->where('type', 'out')
-                        ->orderBy('movement_date', 'desc')
+        
+        $query = StockMovement::with('product', 'user')->where('type', 'out');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('product', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        $recentSales = $query->orderBy('movement_date', 'desc')
                         ->orderBy('id', 'desc')
-                        ->limit(10)
-                        ->get();
+                        ->paginate(10)
+                        ->withQueryString();
 
         return view('kasir.sales.index', compact('products', 'recentSales'));
     }

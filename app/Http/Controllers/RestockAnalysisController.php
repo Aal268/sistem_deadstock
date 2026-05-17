@@ -8,9 +8,23 @@ use Illuminate\Support\Carbon;
 
 class RestockAnalysisController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::query()->with(['category', 'supplier'])->get();
+        $query = Product::query()->with(['category', 'supplier']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->supplier_id);
+        }
+
+        $products = $query->get();
         $threeMonthsAgo = Carbon::now()->subMonths(3);
 
         $analysis = $products->map(function (Product $product) use ($threeMonthsAgo) {
@@ -20,8 +34,8 @@ class RestockAnalysisController extends Controller
                 ->where('movement_date', '>=', $threeMonthsAgo)
                 ->sum('quantity');
 
-            // Rata-rata per bulan
-            $avgMonthlySales = round($totalOutLast3Months / 3, 2);
+            // Rata-rata per bulan dibulatkan tanpa desimal
+            $avgMonthlySales = round($totalOutLast3Months / 3);
 
             // Tentukan status
             $status = 'Normal';
@@ -62,9 +76,18 @@ class RestockAnalysisController extends Controller
             ];
         });
 
+        if ($request->filled('status')) {
+            $statusFilter = $request->status;
+            $analysis = $analysis->filter(function($item) use ($statusFilter) {
+                return strtolower($item['status']) === strtolower($statusFilter);
+            });
+        }
+
         // Urutkan berdasarkan yang paling urgent (Fast Moving dulu)
         $analysis = $analysis->sortByDesc('suggested_buy');
 
-        return view('admin.analysis.index', compact('analysis'));
+        $suppliers = \App\Models\Supplier::orderBy('name')->get();
+
+        return view('admin.analysis.index', compact('analysis', 'suppliers'));
     }
 }
