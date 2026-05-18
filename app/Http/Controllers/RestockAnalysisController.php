@@ -10,7 +10,7 @@ class RestockAnalysisController extends Controller
 {
     public function index()
     {
-        $products = Product::query()->with(['category', 'supplier'])->get();
+        $products = Product::query()->with(['category', 'supplier'])->paginate(10);
         $threeMonthsAgo = Carbon::now()->subMonths(3);
 
         $analysis = $products->map(function (Product $product) use ($threeMonthsAgo) {
@@ -65,6 +65,6 @@ class RestockAnalysisController extends Controller
         // Urutkan berdasarkan yang paling urgent (Fast Moving dulu)
         $analysis = $analysis->sortByDesc('suggested_buy');
 
-        return view('admin.analysis.index', compact('analysis'));
+        return view('admin.analysis.index', compact('analysis', 'products'));
     }
 }

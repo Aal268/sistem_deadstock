@@ -74,5 +74,8 @@
             </tbody>
         </table>
     </div>
+    <div class="p-4">
+        {{ $products->links() }}
+    </div>
 </div>
 @endsection

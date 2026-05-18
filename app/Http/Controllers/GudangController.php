@@ -11,7 +11,7 @@ class GudangController extends Controller
     {
         $products = Product::with('category')
             ->orderBy('name')
-            ->get();
+            ->paginate(10);
 
         $totalProducts = $products->count();
         $totalRemainingStock = $products->sum('current_stock');
@@ -19,13 +19,8 @@ class GudangController extends Controller
             return $p->current_stock <= $p->safety_stock;
         })->count();
 
-        // Tambahan info Manajemen Data
-        $totalCategories = \App\Models\Category::count();
-        $totalSuppliers = \App\Models\Supplier::count();
-
-        return view('gudang.dashboard.gudang', compact(
-            'products', 'totalProducts', 'totalRemainingStock', 'criticalStockItems',
-            'totalCategories', 'totalSuppliers'
+        return view('admin.gudang.gudang', compact(
+            'products', 'totalProducts', 'totalRemainingStock', 'criticalStockItems'
         ));
     }
 

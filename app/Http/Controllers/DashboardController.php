@@ -65,7 +65,7 @@ class DashboardController extends Controller
             $totalSuppliers = \App\Models\Supplier::count();
 
             return view(
-                "gudang.dashboard.gudang",
+                "gudang.dashboard.index",
                 compact(
                     "products",
                     "totalProducts",
@@ -210,8 +210,8 @@ class DashboardController extends Controller
             case "today":
                 $rows = StockMovement::where("type", "out")
                     ->whereDate("movement_date", Carbon::today())
-                    ->selectRaw("strftime('%H', movement_date) as hour_key, SUM(quantity) as total")
-                    ->groupByRaw("strftime('%H', movement_date)")
+                    ->selectRaw("DATE_FORMAT(movement_date, '%H') as hour_key, SUM(quantity) as total")
+                    ->groupByRaw("DATE_FORMAT(movement_date, '%H')")
                     ->pluck("total", "hour_key");
 
                 for ($h = 0; $h < 24; $h++) {
@@ -268,9 +268,9 @@ class DashboardController extends Controller
                         $endOfMonth,
                     ])
                     ->selectRaw(
-                        "strftime('%d', movement_date) as day_key, SUM(quantity) as total",
+                        "DATE_FORMAT(movement_date, '%d') as day_key, SUM(quantity) as total",
                     )
-                    ->groupByRaw("strftime('%d', movement_date)")
+                    ->groupByRaw("DATE_FORMAT(movement_date, '%d')")
                     ->pluck("total", "day_key");
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
@@ -296,9 +296,9 @@ class DashboardController extends Controller
                         $endOfMonth,
                     ])
                     ->selectRaw(
-                        "strftime('%d', movement_date) as day_key, SUM(quantity) as total",
+                        "DATE_FORMAT(movement_date, '%d') as day_key, SUM(quantity) as total",
                     )
-                    ->groupByRaw("strftime('%d', movement_date)")
+                    ->groupByRaw("DATE_FORMAT(movement_date, '%d')")
                     ->pluck("total", "day_key");
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
@@ -331,9 +331,9 @@ class DashboardController extends Controller
                 $rows = StockMovement::where("type", "out")
                     ->whereYear("movement_date", $year)
                     ->selectRaw(
-                        "strftime('%m', movement_date) as month_key, SUM(quantity) as total",
+                        "DATE_FORMAT(movement_date, '%m') as month_key, SUM(quantity) as total",
                     )
-                    ->groupByRaw("strftime('%m', movement_date)")
+                    ->groupByRaw("DATE_FORMAT(movement_date, '%m')")
                     ->pluck("total", "month_key");
 
                 for ($m = 1; $m <= 12; $m++) {
@@ -359,8 +359,8 @@ class DashboardController extends Controller
                         $startBound,
                         $endBound,
                     ])
-                    ->selectRaw("strftime('%Y', movement_date) as year_key, SUM(quantity) as total")
-                    ->groupByRaw("strftime('%Y', movement_date)")
+                    ->selectRaw("DATE_FORMAT(movement_date, '%Y') as year_key, SUM(quantity) as total")
+                    ->groupByRaw("DATE_FORMAT(movement_date, '%Y')")
                     ->pluck("total", "year_key");
 
                 for ($y = $startDecade; $y <= $endDecade; $y++) {
