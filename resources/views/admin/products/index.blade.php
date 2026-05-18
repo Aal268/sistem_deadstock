@@ -11,7 +11,34 @@
     </a>
 </div>
 
-<div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+<!-- Filter Box -->
+<form method="GET" action="/products" class="mb-6 flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div class="flex-1 min-w-[200px]">
+        <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Pencarian Produk</label>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama barang atau SKU..." class="w-full rounded-xl border border-primary px-4 py-2.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+    </div>
+    <div>
+        <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Filter Kategori</label>
+        <select name="category_id" class="w-full rounded-xl border border-primary px-4 py-2.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+            <option value="">Semua Kategori</option>
+            @foreach($categories as $c)
+                <option value="{{ $c->id }}" {{ request('category_id') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="flex items-center gap-2">
+        <button type="submit" class="inline-flex h-[42px] items-center justify-center gap-2 rounded-xl bg-secondary px-5 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
+            <i class="bi bi-funnel"></i> Filter
+        </button>
+        @if(request()->anyFilled(['search', 'category_id']))
+            <a href="/products" class="inline-flex h-[42px] items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-500 transition hover:bg-slate-200">
+                Reset
+            </a>
+        @endif
+    </div>
+</form>
+
+<div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden mb-8">
     <div class="overflow-x-auto">
         <table class="w-full text-left text-sm">
             <thead class="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -77,5 +104,10 @@
     <div class="p-4">
         {{ $products->links() }}
     </div>
+    @if($products->hasPages())
+    <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+        {{ $products->links() }}
+    </div>
+    @endif
 </div>
 @endsection

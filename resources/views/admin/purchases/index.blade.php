@@ -51,9 +51,34 @@
     <!-- Histori Penerimaan -->
     <div class="lg:col-span-7">
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <div class="border-b border-slate-100 bg-white px-6 py-4">
-                <h5 class="font-bold text-slate-800">10 Histori Penerimaan Terakhir</h5>
+            <div class="border-b border-slate-100 bg-white px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h5 class="font-bold text-slate-800">Histori Penerimaan Barang Masuk</h5>
             </div>
+            <!-- Filter Box -->
+            <form method="GET" action="/purchases" class="border-b border-slate-100 bg-slate-50/50 p-5 flex flex-wrap items-end gap-3">
+                <div class="flex-1 min-w-[140px]">
+                    <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Pencarian</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="SKU/Nama..." class="w-full rounded-xl border border-primary px-3 py-2 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+                </div>
+                <div class="flex-1 min-w-[130px]">
+                    <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Dari Tanggal</label>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full rounded-xl border border-primary px-3 py-2 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+                </div>
+                <div class="flex-1 min-w-[130px]">
+                    <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Sampai Tanggal</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full rounded-xl border border-primary px-3 py-2 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="submit" class="inline-flex h-[42px] items-center justify-center gap-2 rounded-xl bg-secondary px-4 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    @if(request()->anyFilled(['search', 'start_date', 'end_date']))
+                        <a href="/purchases" class="inline-flex h-[42px] items-center justify-center rounded-xl bg-slate-200 px-3 text-sm font-bold text-slate-600 transition hover:bg-slate-300">
+                            Reset
+                        </a>
+                    @endif
+                </div>
+            </form>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <thead class="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -92,6 +117,11 @@
                     </tbody>
                 </table>
             </div>
+            @if($recentPurchases->hasPages())
+            <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+                {{ $recentPurchases->links() }}
+            </div>
+            @endif
         </div>
     </div>
 </div>

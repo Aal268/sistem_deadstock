@@ -95,7 +95,7 @@ class DashboardController extends Controller
                     ->where("movement_date", ">=", $threeMonthsAgo)
                     ->sum("quantity");
 
-                $avgMonthlySales = round($totalOutLast3Months / 3, 2);
+                $avgMonthlySales = round($totalOutLast3Months / 3);
 
                 // Logika Status (Sesuai algoritma yang ada)
                 $status = "Normal";
