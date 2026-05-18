@@ -18,7 +18,7 @@
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div class="rounded-2xl bg-primary p-5 text-white shadow-lg shadow-primary/20 relative overflow-hidden">
             <div class="relative z-10">
-                <p class="text-xs font-bold tracking-wider text-white/80">Varian Produk</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Varian Produk</p>
                 <p class="mt-2 text-4xl font-black">{{ $totalProducts }}</p>
                 <p class="mt-1 text-xs text-white/60">Terdaftar di sistem</p>
             </div>
@@ -27,25 +27,25 @@
 
         <div class="rounded-2xl bg-[#13505B] p-5 text-white shadow-lg shadow-[#13505B]/20 relative overflow-hidden">
             <div class="relative z-10">
-                <p class="text-xs font-bold tracking-wider text-white/80">Sisa Stok Total</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Sisa Stok Total</p>
                 <p class="mt-2 text-4xl font-black">{{ number_format($totalRemainingStock, 0, ',', '.') }} <span class="text-lg font-medium">Pcs</span></p>
                 <p class="mt-1 text-xs text-white/60">Ketersediaan fisik</p>
             </div>
             <i class="fa-solid fa-warehouse absolute -right-4 -bottom-4 text-7xl text-white/10"></i>
         </div>
 
-        <div class="rounded-2xl bg-primary p-5 text-white shadow-lg shadow-secondary/20 relative overflow-hidden">
+        <div class="rounded-2xl bg-secondary p-5 text-white shadow-lg shadow-secondary/20 relative overflow-hidden">
             <div class="relative z-10">
-                <p class="text-xs font-bold tracking-wider text-white/80">Prioritas Beli</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Prioritas Beli</p>
                 <p class="mt-2 text-4xl font-black">{{ $priorityBuyCount }} <span class="text-lg font-medium">Item</span></p>
                 <p class="mt-1 text-xs text-white/60">Berdasarkan velocity</p>
             </div>
             <i class="fa-solid fa-cart-shopping absolute -right-4 -bottom-4 text-7xl text-white/10"></i>
         </div>
 
-        <div class="rounded-2xl bg-alert p-5 text-white shadow-lg shadow-alert/20 relative overflow-hidden">
+        <div class="rounded-2xl bg-danger p-5 text-white shadow-lg shadow-danger/20 relative overflow-hidden" style="background: #B76E79">
             <div class="relative z-10">
-                <p class="text-xs font-bold tracking-wider text-white/80">Stok Kritis</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-white/80">Stok Kritis</p>
                 <p class="mt-2 text-4xl font-black">{{ $criticalStockItems }} <span class="text-lg font-medium">Item</span></p>
                 <p class="mt-1 text-xs text-white/60">Segera restock</p>
             </div>
@@ -88,6 +88,7 @@
         <div class="rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
             <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
                 <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-crown text-warning"></i>
                     <h3 class="font-bold text-slate-800">Top 3 Rata-rata Tertinggi</h3>
                 </div>
             </div>
@@ -121,6 +122,7 @@
         <div class="rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
             <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
                 <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bolt-lightning text-danger"></i>
                     <h3 class="font-bold text-slate-800">Status Urgent & Rekomendasi</h3>
                 </div>
             </div>
@@ -146,14 +148,14 @@
                             </td>
                             <td class="px-6 py-4">
                                 @if($item['status'] == 'Deadstock')
-                                    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-alert/10 text-alert">DEADSTOCK</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger">DEADSTOCK</span>
                                 @else
                                     <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-success/10 text-success">FAST-MOVING</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
                                 @if($item['status'] == 'Deadstock')
-                                    <span class="text-xs font-bold text-alert">Obral / Promo</span>
+                                    <span class="text-xs font-bold text-danger">Obral / Promo</span>
                                 @else
                                     <span class="text-xs font-bold text-primary">Beli +{{ $item['suggested_buy'] }} Pcs</span>
                                 @endif
@@ -188,9 +190,9 @@
                         </div>
                     </div>
                 </a>
-                <a href="/purchases" class="group p-4 rounded-2xl border border-info bg-white hover:bg-primary transition shadow-sm">
+                <a href="/purchases" class="group p-4 rounded-2xl border border-info bg-white hover:bg-secondary transition shadow-sm">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-primary/10 group-hover:bg-white/20 flex items-center justify-center text-primary group-hover:text-white transition">
+                        <div class="w-12 h-12 rounded-xl bg-secondary/10 group-hover:bg-white/20 flex items-center justify-center text-secondary group-hover:text-white transition">
                             <i class="fa-solid fa-truck-loading text-xl"></i>
                         </div>
                         <div>

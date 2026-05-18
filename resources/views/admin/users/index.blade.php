@@ -127,9 +127,6 @@
                     </tbody>
                 </table>
             </div>
-            <div class="border-t border-slate-100 bg-white px-6 py-4">
-                {{ $users->links() }}
-            </div>
         </div>
     </div>
 </div>

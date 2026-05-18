@@ -49,32 +49,8 @@ class DashboardController extends Controller
                 compact("totalItemSold", "chartLabels", "chartData"),
             );
         } elseif ($user->role === "gudang") {
-            // Gudang Dashboard: List barang dan info gudang
-            $products = Product::with("category")->get();
-
-            $totalProducts = $products->count();
-            $totalRemainingStock = $products->sum("current_stock");
-            $criticalStockItems = $products
-                ->filter(function ($p) {
-                    return $p->current_stock <= $p->safety_stock;
-                })
-                ->count();
-
-            // Tambahan info Manajemen Data
-            $totalCategories = \App\Models\Category::count();
-            $totalSuppliers = \App\Models\Supplier::count();
-
-            return view(
-                "gudang.dashboard.index",
-                compact(
-                    "products",
-                    "totalProducts",
-                    "totalRemainingStock",
-                    "criticalStockItems",
-                    "totalCategories",
-                    "totalSuppliers",
-                ),
-            );
+            // Gudang Dashboard: Menggunakan GudangController agar sinkron dengan filter dan paginasi
+            return app(\App\Http\Controllers\GudangController::class)->index(request());
         } elseif ($user->role === "admin") {
             // Admin Dashboard: Ringkasan stok & Analisis mendalam
             $products = Product::with("stockMovements")->get();
@@ -210,8 +186,8 @@ class DashboardController extends Controller
             case "today":
                 $rows = StockMovement::where("type", "out")
                     ->whereDate("movement_date", Carbon::today())
-                    ->selectRaw("DATE_FORMAT(movement_date, '%H') as hour_key, SUM(quantity) as total")
-                    ->groupByRaw("DATE_FORMAT(movement_date, '%H')")
+                    ->selectRaw("strftime('%H', movement_date) as hour_key, SUM(quantity) as total")
+                    ->groupByRaw("strftime('%H', movement_date)")
                     ->pluck("total", "hour_key");
 
                 for ($h = 0; $h < 24; $h++) {
@@ -268,9 +244,9 @@ class DashboardController extends Controller
                         $endOfMonth,
                     ])
                     ->selectRaw(
-                        "DATE_FORMAT(movement_date, '%d') as day_key, SUM(quantity) as total",
+                        "strftime('%d', movement_date) as day_key, SUM(quantity) as total",
                     )
-                    ->groupByRaw("DATE_FORMAT(movement_date, '%d')")
+                    ->groupByRaw("strftime('%d', movement_date)")
                     ->pluck("total", "day_key");
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
@@ -296,9 +272,9 @@ class DashboardController extends Controller
                         $endOfMonth,
                     ])
                     ->selectRaw(
-                        "DATE_FORMAT(movement_date, '%d') as day_key, SUM(quantity) as total",
+                        "strftime('%d', movement_date) as day_key, SUM(quantity) as total",
                     )
-                    ->groupByRaw("DATE_FORMAT(movement_date, '%d')")
+                    ->groupByRaw("strftime('%d', movement_date)")
                     ->pluck("total", "day_key");
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
@@ -331,9 +307,9 @@ class DashboardController extends Controller
                 $rows = StockMovement::where("type", "out")
                     ->whereYear("movement_date", $year)
                     ->selectRaw(
-                        "DATE_FORMAT(movement_date, '%m') as month_key, SUM(quantity) as total",
+                        "strftime('%m', movement_date) as month_key, SUM(quantity) as total",
                     )
-                    ->groupByRaw("DATE_FORMAT(movement_date, '%m')")
+                    ->groupByRaw("strftime('%m', movement_date)")
                     ->pluck("total", "month_key");
 
                 for ($m = 1; $m <= 12; $m++) {
@@ -359,8 +335,8 @@ class DashboardController extends Controller
                         $startBound,
                         $endBound,
                     ])
-                    ->selectRaw("DATE_FORMAT(movement_date, '%Y') as year_key, SUM(quantity) as total")
-                    ->groupByRaw("DATE_FORMAT(movement_date, '%Y')")
+                    ->selectRaw("strftime('%Y', movement_date) as year_key, SUM(quantity) as total")
+                    ->groupByRaw("strftime('%Y', movement_date)")
                     ->pluck("total", "year_key");
 
                 for ($y = $startDecade; $y <= $endDecade; $y++) {

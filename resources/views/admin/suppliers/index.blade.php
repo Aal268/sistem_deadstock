@@ -88,10 +88,7 @@
                                     {{ $supplier->products_count }} Barang
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right flex justify-end gap-1">
-                                <a href="/suppliers/{{ $supplier->id }}/edit" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-secondary">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
+                            <td class="px-6 py-4 text-right">
                                 <form action="/suppliers/{{ $supplier->id }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus supplier ini?')">
                                     @csrf
                                     @method('DELETE')
@@ -111,9 +108,6 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-            <div class="border-t border-slate-100 bg-white px-6 py-4">
-                {{ $suppliers->links() }}
             </div>
         </div>
     </div>

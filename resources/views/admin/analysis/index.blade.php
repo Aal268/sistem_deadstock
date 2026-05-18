@@ -52,7 +52,7 @@
                     <th class="px-6 py-4">Supplier</th>
                     <th class="px-6 py-4 text-center">Sisa Stok</th>
                     <th class="px-6 py-4 text-center">Safety Stok</th>
-                    <th class="px-6 py-4 text-center">Rata-rata Terjual/Bulan <br>(dalam Desimal)</th>
+                    <th class="px-6 py-4 text-center">Rata-rata Terjual/Bulan</th>
                     <th class="px-6 py-4 text-center">Status Velocity</th>
                     <th class="px-6 py-4 text-center">Saran Pembelian</th>
                 </tr>
@@ -115,9 +115,6 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
-    <div class="border-t border-slate-100 bg-white px-6 py-4">
-        {{ $products->links() }}
     </div>
 </div>
 @endsection
