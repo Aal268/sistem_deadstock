@@ -103,7 +103,7 @@
                         <p class="text-xs text-slate-500">{{ $item['product']->category->name ?? '-' }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm font-black text-secondary">{{ $item['avg_monthly_sales'] }}</p>
+                        <p class="text-sm font-black text-secondary">{{ round($item['avg_monthly_sales']) }}</p>
                         <p class="text-[10px] uppercase font-bold text-slate-400">Pcs/Bulan</p>
                     </div>
                 </div>
