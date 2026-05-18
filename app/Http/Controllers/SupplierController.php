@@ -9,6 +9,7 @@ class SupplierController extends Controller
 {
     public function index(Request $request)
     {
+        $suppliers = Supplier::withCount('products')->paginate(10);
         $query = Supplier::withCount('products');
 
         if ($request->filled('search')) {
@@ -36,6 +37,25 @@ class SupplierController extends Controller
         Supplier::create($request->all());
 
         return back()->with('success', 'Pemasok baru berhasil ditambahkan!');
+    }
+
+    public function edit(Supplier $supplier)
+    {
+        return view('admin.suppliers.edit', compact('supplier'));
+    }
+
+    public function update(Request $request, Supplier $supplier)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_person' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string'
+        ]);
+
+        $supplier->update($request->all());
+
+        return redirect('/suppliers')->with('success', 'Data pemasok berhasil diperbarui!');
     }
 
     public function destroy(Supplier $supplier)

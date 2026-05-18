@@ -10,6 +10,7 @@ class RestockAnalysisController extends Controller
 {
     public function index(Request $request)
     {
+        $products = Product::query()->with(['category', 'supplier'])->paginate(10);
         $query = Product::query()->with(['category', 'supplier']);
 
         if ($request->filled('search')) {
@@ -86,6 +87,7 @@ class RestockAnalysisController extends Controller
         // Urutkan berdasarkan yang paling urgent (Fast Moving dulu)
         $analysis = $analysis->sortByDesc('suggested_buy');
 
+        return view('admin.analysis.index', compact('analysis', 'products'));
         $suppliers = \App\Models\Supplier::orderBy('name')->get();
 
         return view('admin.analysis.index', compact('analysis', 'suppliers'));

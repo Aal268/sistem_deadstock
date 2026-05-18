@@ -101,6 +101,9 @@
             </tbody>
         </table>
     </div>
+    <div class="p-4">
+        {{ $products->links() }}
+    </div>
     @if($products->hasPages())
     <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
         {{ $products->links() }}

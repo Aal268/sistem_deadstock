@@ -52,7 +52,7 @@ Route::middleware(["auth"])->group(function () {
         Route::resource(
             "suppliers",
             App\Http\Controllers\SupplierController::class,
-        )->except(["create", "show", "edit", "update"]);
+        )->except(["create", "show"]);
         Route::resource(
             "products",
             App\Http\Controllers\ProductController::class,

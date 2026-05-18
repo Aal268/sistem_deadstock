@@ -11,6 +11,11 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+        $products = Product::with('category')
+            ->orderBy('name')
+            ->paginate(20);
+
+        return view('admin.products.index', compact('products'));
         $query = Product::with(['category', 'supplier']);
 
         if ($request->filled('search')) {

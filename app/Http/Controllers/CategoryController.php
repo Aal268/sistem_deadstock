@@ -9,13 +9,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Category::withCount('products');
-        
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        $categories = $query->orderBy('name')->get();
+        $categories = Category::withCount('products')->paginate(10);
         return view('admin.categories.index', compact('categories'));
     }
 
