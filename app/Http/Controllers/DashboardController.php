@@ -186,9 +186,13 @@ class DashboardController extends Controller
             case "today":
                 $rows = StockMovement::where("type", "out")
                     ->whereDate("movement_date", Carbon::today())
-                    ->selectRaw("strftime('%H', movement_date) as hour_key, SUM(quantity) as total")
-                    ->groupByRaw("strftime('%H', movement_date)")
-                    ->pluck("total", "hour_key");
+                    ->get(["movement_date", "quantity"])
+                    ->groupBy(function ($movement) {
+                        return Carbon::parse($movement->movement_date)->format("H");
+                    })
+                    ->map(function ($group) {
+                        return $group->sum("quantity");
+                    });
 
                 for ($h = 0; $h < 24; $h++) {
                     $labels[] = str_pad($h, 2, "0", STR_PAD_LEFT) . ':00';
@@ -208,12 +212,16 @@ class DashboardController extends Controller
 
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        $startOfWeek->toDateString(),
-                        $endOfWeek->toDateString(),
+                        $startOfWeek->copy()->startOfDay(),
+                        $endOfWeek->copy()->endOfDay(),
                     ])
-                    ->selectRaw("movement_date, SUM(quantity) as total")
-                    ->groupBy("movement_date")
-                    ->pluck("total", "movement_date");
+                    ->get(["movement_date", "quantity"])
+                    ->groupBy(function ($movement) {
+                        return Carbon::parse($movement->movement_date)->toDateString();
+                    })
+                    ->map(function ($group) {
+                        return $group->sum("quantity");
+                    });
 
                 $dayNames = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
                 for ($i = 0; $i < 7; $i++) {
@@ -240,14 +248,16 @@ class DashboardController extends Controller
 
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        $startOfMonth,
-                        $endOfMonth,
+                        $now->copy()->startOfMonth()->startOfDay(),
+                        $now->copy()->endOfMonth()->endOfDay(),
                     ])
-                    ->selectRaw(
-                        "strftime('%d', movement_date) as day_key, SUM(quantity) as total",
-                    )
-                    ->groupByRaw("strftime('%d', movement_date)")
-                    ->pluck("total", "day_key");
+                    ->get(["movement_date", "quantity"])
+                    ->groupBy(function ($movement) {
+                        return Carbon::parse($movement->movement_date)->format("d");
+                    })
+                    ->map(function ($group) {
+                        return $group->sum("quantity");
+                    });
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
                     $labels[] = (string) $i;
@@ -268,14 +278,16 @@ class DashboardController extends Controller
 
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        $startOfMonth,
-                        $endOfMonth,
+                        $date->copy()->startOfMonth()->startOfDay(),
+                        $date->copy()->endOfMonth()->endOfDay(),
                     ])
-                    ->selectRaw(
-                        "strftime('%d', movement_date) as day_key, SUM(quantity) as total",
-                    )
-                    ->groupByRaw("strftime('%d', movement_date)")
-                    ->pluck("total", "day_key");
+                    ->get(["movement_date", "quantity"])
+                    ->groupBy(function ($movement) {
+                        return Carbon::parse($movement->movement_date)->format("d");
+                    })
+                    ->map(function ($group) {
+                        return $group->sum("quantity");
+                    });
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
                     $labels[] = (string) $i;
@@ -306,11 +318,13 @@ class DashboardController extends Controller
 
                 $rows = StockMovement::where("type", "out")
                     ->whereYear("movement_date", $year)
-                    ->selectRaw(
-                        "strftime('%m', movement_date) as month_key, SUM(quantity) as total",
-                    )
-                    ->groupByRaw("strftime('%m', movement_date)")
-                    ->pluck("total", "month_key");
+                    ->get(["movement_date", "quantity"])
+                    ->groupBy(function ($movement) {
+                        return Carbon::parse($movement->movement_date)->format("m");
+                    })
+                    ->map(function ($group) {
+                        return $group->sum("quantity");
+                    });
 
                 for ($m = 1; $m <= 12; $m++) {
                     $labels[] = $monthNames[$m - 1];
@@ -332,12 +346,16 @@ class DashboardController extends Controller
 
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        $startBound,
-                        $endBound,
+                        Carbon::createFromDate($startDecade, 1, 1)->startOfDay(),
+                        Carbon::createFromDate($endDecade, 12, 31)->endOfDay(),
                     ])
-                    ->selectRaw("strftime('%Y', movement_date) as year_key, SUM(quantity) as total")
-                    ->groupByRaw("strftime('%Y', movement_date)")
-                    ->pluck("total", "year_key");
+                    ->get(["movement_date", "quantity"])
+                    ->groupBy(function ($movement) {
+                        return Carbon::parse($movement->movement_date)->format("Y");
+                    })
+                    ->map(function ($group) {
+                        return $group->sum("quantity");
+                    });
 
                 for ($y = $startDecade; $y <= $endDecade; $y++) {
                     $labels[] = (string) $y;

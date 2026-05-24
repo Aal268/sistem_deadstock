@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SalesReportTemplateExport;
 use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SaleController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::with('category')->where('current_stock', '>', 0)->get();
-        
-        $query = StockMovement::with('product', 'user')->where('type', 'out');
+        $products = Product::with('category')
+            ->where('current_stock', '>', 0)
+            ->orderBy('name')
+            ->get();
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('product', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('sku', 'like', "%{$search}%");
-            });
-        }
-
-        $recentSales = $query->orderBy('movement_date', 'desc')
+        $recentSales = $this->buildSalesQuery($request, ['product', 'user'])
+                        ->orderBy('movement_date', 'desc')
                         ->orderBy('id', 'desc')
                         ->paginate(10)
                         ->withQueryString();
@@ -34,37 +30,71 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-            'movement_date' => 'required|date'
-        ]);
+        $items = $request->input('products');
 
-        $product = Product::findOrFail($request->product_id);
-
-        if ($product->current_stock < $request->quantity) {
-            return back()->with('error', 'Stok tidak mencukupi untuk penjualan ini!');
+        if (!is_array($items) || empty($items)) {
+            $items = [[
+                'product_id' => $request->input('product_id'),
+                'quantity' => $request->input('quantity'),
+            ]];
         }
 
-        // Gabungkan tanggal input dengan waktu sekarang untuk detail timestamp
-        $movementDateTime = Carbon::parse($request->movement_date)->setTimeFrom(now());
+        $request->merge(['products' => $items]);
 
-        // Catat penjualan
-        StockMovement::create([
-            'product_id' => $product->id,
-            'type' => 'out',
-            'status' => 'success',
-            'quantity' => $request->quantity,
-            'price_at_transaction' => $product->unit_price,
-            'user_id' => auth()->id(),
-            'movement_date' => $movementDateTime,
-            'note' => $request->note ?? 'Penjualan oleh Kasir'
+        $request->validate([
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'movement_date' => 'required|date',
+            'note' => 'nullable|string',
         ]);
 
-        // Kurangi stok
-        $product->decrement('current_stock', $request->quantity);
+        $salesItems = collect($request->input('products'))
+            ->filter(function ($item) {
+                return filled($item['product_id'] ?? null);
+            })
+            ->map(function ($item) {
+                return [
+                    'product_id' => (int) $item['product_id'],
+                    'quantity' => (int) $item['quantity'],
+                ];
+            })
+            ->values();
 
-        return back()->with('success', 'Transaksi penjualan berhasil dicatat!');
+        if ($salesItems->isEmpty()) {
+            return back()->withInput()->with('error', 'Tambahkan minimal satu barang sebelum memproses penjualan.');
+        }
+
+        try {
+            DB::transaction(function () use ($salesItems, $request) {
+                $movementDateTime = Carbon::parse($request->movement_date)->setTimeFrom(now());
+
+                foreach ($salesItems as $item) {
+                    $product = Product::whereKey($item['product_id'])->lockForUpdate()->firstOrFail();
+
+                    if ($product->current_stock < $item['quantity']) {
+                        throw new \RuntimeException("Stok {$product->name} tidak mencukupi untuk jumlah yang dipilih.");
+                    }
+
+                    StockMovement::create([
+                        'product_id' => $product->id,
+                        'type' => 'out',
+                        'status' => 'success',
+                        'quantity' => $item['quantity'],
+                        'price_at_transaction' => $product->unit_price,
+                        'user_id' => auth()->id(),
+                        'movement_date' => $movementDateTime,
+                        'note' => $request->note ?? 'Penjualan oleh Kasir',
+                    ]);
+
+                    $product->decrement('current_stock', $item['quantity']);
+                }
+            });
+
+            return back()->with('success', 'Transaksi penjualan berhasil dicatat!');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
     }
 
     public function show(StockMovement $stockMovement)
@@ -80,25 +110,8 @@ class SaleController extends Controller
 
     public function history(Request $request)
     {
-        $query = StockMovement::with('product.category', 'user')->where('type', 'out');
-
-        if ($request->filled('start_date')) {
-            $query->whereDate('movement_date', '>=', $request->start_date);
-        }
-        
-        if ($request->filled('end_date')) {
-            $query->whereDate('movement_date', '<=', $request->end_date);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('product', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('sku', 'like', "%{$search}%");
-            });
-        }
-
-        $allSales = $query->orderBy('movement_date', 'desc')
+        $allSales = $this->buildSalesQuery($request)
+                        ->orderBy('movement_date', 'desc')
                         ->orderBy('id', 'desc')
                         ->paginate(20)
                         ->withQueryString();
@@ -106,27 +119,49 @@ class SaleController extends Controller
         return view('kasir.histori-sales.index', compact('allSales'));
     }
 
+    public function export(Request $request)
+    {
+        $allSales = $this->buildSalesQuery($request)
+                        ->orderBy('movement_date', 'desc')
+                        ->orderBy('id', 'desc')
+                        ->get();
+
+        $fileName = 'riwayat-penjualan-' . now()->format('Ymd-His') . '.xlsx';
+
+        return response()->streamDownload(function () use ($allSales) {
+            echo view('kasir.histori-sales.export', compact('allSales'))->render();
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+        ]);
+    }
+
+    public function downloadImportTemplate()
+    {
+        return Excel::download(
+            new SalesReportTemplateExport(),
+            'template-import-laporan-penjualan.xlsx'
+        );
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            Excel::import(new \App\Imports\SalesReportImport(), $request->file('file'));
+
+            return back()->with('success', 'Laporan penjualan berhasil diimpor.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
     public function adminHistory(Request $request)
     {
-        $query = StockMovement::with('product.category', 'user')->where('type', 'out');
-
-        if ($request->filled('start_date')) {
-            $query->whereDate('movement_date', '>=', $request->start_date);
-        }
-        
-        if ($request->filled('end_date')) {
-            $query->whereDate('movement_date', '<=', $request->end_date);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('product', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('sku', 'like', "%{$search}%");
-            });
-        }
-
-        $allSales = $query->orderBy('movement_date', 'desc')
+        $allSales = $this->buildSalesQuery($request)
+                        ->orderBy('movement_date', 'desc')
                         ->orderBy('id', 'desc')
                         ->paginate(20)
                         ->withQueryString();
@@ -192,5 +227,28 @@ class SaleController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    private function buildSalesQuery(Request $request, array $relations = ['product.category', 'user'])
+    {
+        $query = StockMovement::with($relations)->where('type', 'out');
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('movement_date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('movement_date', '<=', $request->end_date);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('product', function ($productQuery) use ($search) {
+                $productQuery->where('name', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        return $query;
     }
 }
