@@ -1,8 +1,17 @@
 @extends('layouts.app')
 @section('content')
-<div class="mb-8">
-    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Riwayat Penjualan</h2>
-    <p class="text-sm text-slate-500">Daftar lengkap seluruh transaksi barang keluar.</p>
+<div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+    <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Riwayat Penjualan</h2>
+        <p class="text-sm text-slate-500">Daftar lengkap seluruh transaksi barang keluar.</p>
+    </div>
+    <div>
+        <a href="{{ route('histori-sales.export', request()->query()) }}"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-700">
+            <i class="bi bi-file-earmark-excel"></i>
+            Export Excel
+        </a>
+    </div>
 </div>
 
 <!-- Filter Box -->

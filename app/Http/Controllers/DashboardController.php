@@ -181,18 +181,17 @@ class DashboardController extends Controller
         $title = "";
         $chartType = "line";
 
+        $isSqlite = \Illuminate\Support\Facades\DB::connection()->getDriverName() === 'sqlite';
+
         switch ($period) {
             /* ---- Hari Ini: penjualan per jam 00:00 - 23:59 (line) ---------- */
             case "today":
+                $hourSelect = $isSqlite ? "strftime('%H', movement_date)" : "DATE_FORMAT(movement_date, '%H')";
                 $rows = StockMovement::where("type", "out")
                     ->whereDate("movement_date", Carbon::today())
-                    ->get(["movement_date", "quantity"])
-                    ->groupBy(function ($movement) {
-                        return Carbon::parse($movement->movement_date)->format("H");
-                    })
-                    ->map(function ($group) {
-                        return $group->sum("quantity");
-                    });
+                    ->selectRaw("{$hourSelect} as hour_key, SUM(quantity) as total")
+                    ->groupByRaw($hourSelect)
+                    ->pluck("total", "hour_key");
 
                 for ($h = 0; $h < 24; $h++) {
                     $labels[] = str_pad($h, 2, "0", STR_PAD_LEFT) . ':00';
@@ -212,16 +211,12 @@ class DashboardController extends Controller
 
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        $startOfWeek->copy()->startOfDay(),
-                        $endOfWeek->copy()->endOfDay(),
+                        $startOfWeek->toDateString(),
+                        $endOfWeek->toDateString(),
                     ])
-                    ->get(["movement_date", "quantity"])
-                    ->groupBy(function ($movement) {
-                        return Carbon::parse($movement->movement_date)->toDateString();
-                    })
-                    ->map(function ($group) {
-                        return $group->sum("quantity");
-                    });
+                    ->selectRaw("movement_date, SUM(quantity) as total")
+                    ->groupBy("movement_date")
+                    ->pluck("total", "movement_date");
 
                 $dayNames = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
                 for ($i = 0; $i < 7; $i++) {
@@ -246,18 +241,15 @@ class DashboardController extends Controller
                 $endOfMonth = $now->copy()->endOfMonth()->toDateString();
                 $daysInMonth = $now->daysInMonth;
 
+                $daySelect = $isSqlite ? "strftime('%d', movement_date)" : "DATE_FORMAT(movement_date, '%d')";
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        $now->copy()->startOfMonth()->startOfDay(),
-                        $now->copy()->endOfMonth()->endOfDay(),
+                        $startOfMonth,
+                        $endOfMonth,
                     ])
-                    ->get(["movement_date", "quantity"])
-                    ->groupBy(function ($movement) {
-                        return Carbon::parse($movement->movement_date)->format("d");
-                    })
-                    ->map(function ($group) {
-                        return $group->sum("quantity");
-                    });
+                    ->selectRaw("{$daySelect} as day_key, SUM(quantity) as total")
+                    ->groupByRaw($daySelect)
+                    ->pluck("total", "day_key");
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
                     $labels[] = (string) $i;
@@ -276,18 +268,15 @@ class DashboardController extends Controller
                 $endOfMonth = $date->copy()->endOfMonth()->toDateString();
                 $daysInMonth = $date->daysInMonth;
 
+                $daySelect = $isSqlite ? "strftime('%d', movement_date)" : "DATE_FORMAT(movement_date, '%d')";
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        $date->copy()->startOfMonth()->startOfDay(),
-                        $date->copy()->endOfMonth()->endOfDay(),
+                        $startOfMonth,
+                        $endOfMonth,
                     ])
-                    ->get(["movement_date", "quantity"])
-                    ->groupBy(function ($movement) {
-                        return Carbon::parse($movement->movement_date)->format("d");
-                    })
-                    ->map(function ($group) {
-                        return $group->sum("quantity");
-                    });
+                    ->selectRaw("{$daySelect} as day_key, SUM(quantity) as total")
+                    ->groupByRaw($daySelect)
+                    ->pluck("total", "day_key");
 
                 for ($i = 1; $i <= $daysInMonth; $i++) {
                     $labels[] = (string) $i;
@@ -316,15 +305,12 @@ class DashboardController extends Controller
                     "Des",
                 ];
 
+                $monthSelect = $isSqlite ? "strftime('%m', movement_date)" : "DATE_FORMAT(movement_date, '%m')";
                 $rows = StockMovement::where("type", "out")
                     ->whereYear("movement_date", $year)
-                    ->get(["movement_date", "quantity"])
-                    ->groupBy(function ($movement) {
-                        return Carbon::parse($movement->movement_date)->format("m");
-                    })
-                    ->map(function ($group) {
-                        return $group->sum("quantity");
-                    });
+                    ->selectRaw("{$monthSelect} as month_key, SUM(quantity) as total")
+                    ->groupByRaw($monthSelect)
+                    ->pluck("total", "month_key");
 
                 for ($m = 1; $m <= 12; $m++) {
                     $labels[] = $monthNames[$m - 1];
@@ -344,18 +330,15 @@ class DashboardController extends Controller
                 $startBound = Carbon::createFromDate($startDecade, 1, 1)->startOfDay()->toDateString();
                 $endBound = Carbon::createFromDate($endDecade, 12, 31)->endOfDay()->toDateString();
 
+                $yearSelect = $isSqlite ? "strftime('%Y', movement_date)" : "DATE_FORMAT(movement_date, '%Y')";
                 $rows = StockMovement::where("type", "out")
                     ->whereBetween("movement_date", [
-                        Carbon::createFromDate($startDecade, 1, 1)->startOfDay(),
-                        Carbon::createFromDate($endDecade, 12, 31)->endOfDay(),
+                        $startBound,
+                        $endBound,
                     ])
-                    ->get(["movement_date", "quantity"])
-                    ->groupBy(function ($movement) {
-                        return Carbon::parse($movement->movement_date)->format("Y");
-                    })
-                    ->map(function ($group) {
-                        return $group->sum("quantity");
-                    });
+                    ->selectRaw("{$yearSelect} as year_key, SUM(quantity) as total")
+                    ->groupByRaw($yearSelect)
+                    ->pluck("total", "year_key");
 
                 for ($y = $startDecade; $y <= $endDecade; $y++) {
                     $labels[] = (string) $y;

@@ -12,7 +12,7 @@ class SalesReportTemplateExport implements FromArray, WithHeadings, ShouldAutoSi
     {
         return [
             'tanggal_waktu',
-            'sku',
+            'nama_produk',
             'qty',
             'catatan',
         ];
@@ -21,8 +21,8 @@ class SalesReportTemplateExport implements FromArray, WithHeadings, ShouldAutoSi
     public function array(): array
     {
         return [
-            ['2026-05-21 10:30:00', 'ELK-001', 2, 'Contoh laporan penjualan'],
-            ['2026-05-21 11:00:00', 'SKU-ABC-123', 1, ''],
+            ['2026-05-21 10:30:00', 'Kabel Data Type C', 2, 'Contoh laporan penjualan'],
+            ['2026-05-21 11:00:00', 'Kemeja Polos Pria', 1, ''],
         ];
     }
 }

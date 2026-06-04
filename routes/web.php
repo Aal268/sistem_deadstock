@@ -26,6 +26,8 @@ Route::middleware(["auth"])->group(function () {
             SaleController::class,
             "show",
         ])->name("sales.show");
+        Route::get("/histori-sales/export", [SaleController::class, "export"])
+            ->name("histori-sales.export");
     });
 
     // Khusus Administrator (Kasir)
@@ -33,8 +35,6 @@ Route::middleware(["auth"])->group(function () {
         Route::get("/sales", [SaleController::class, "index"]);
         Route::post("/sales", [SaleController::class, "store"]);
         Route::get("/histori-sales", [SaleController::class, "history"]);
-        Route::get("/histori-sales/export", [SaleController::class, "export"])
-            ->name("histori-sales.export");
         Route::get("/histori-sales/template-import", [SaleController::class, "downloadImportTemplate"])
             ->name("histori-sales.template-import");
         Route::post("/histori-sales/import", [SaleController::class, "import"])

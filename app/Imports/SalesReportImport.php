@@ -26,18 +26,27 @@ class SalesReportImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                 $rowData = $this->normalizeRow($row);
                 $tanggalWaktu = $this->parseTanggalWaktu($this->firstValue($rowData, ['tanggal_waktu', 'tanggal waktu']));
                 $sku = trim((string) $this->firstValue($rowData, ['sku']));
+                $namaProduk = trim((string) $this->firstValue($rowData, ['nama_produk', 'nama produk', 'produk', 'name']));
                 $quantityValue = $this->firstValue($rowData, ['qty', 'quantity', 'jumlah']);
                 $quantity = is_numeric($quantityValue) ? (int) $quantityValue : 0;
                 $note = trim((string) $this->firstValue($rowData, ['catatan', 'note', 'keterangan']));
 
-                if ($tanggalWaktu === null || $sku === '' || $quantity < 1) {
-                    throw new \RuntimeException("Baris {$rowNumber} wajib berisi tanggal_waktu, sku, dan qty yang valid.");
+                if ($tanggalWaktu === null || ($sku === '' && $namaProduk === '') || $quantity < 1) {
+                    throw new \RuntimeException("Baris {$rowNumber} wajib berisi tanggal_waktu, nama_produk, dan qty yang valid.");
                 }
 
-                $product = Product::where('sku', $sku)->lockForUpdate()->first();
+                $product = null;
+                if ($sku !== '') {
+                    $product = Product::where('sku', $sku)->lockForUpdate()->first();
+                }
+
+                if (! $product && $namaProduk !== '') {
+                    $product = Product::where('name', $namaProduk)->lockForUpdate()->first();
+                }
 
                 if (! $product) {
-                    throw new \RuntimeException("Baris {$rowNumber}: SKU {$sku} tidak ditemukan.");
+                    $identifier = $namaProduk !== '' ? "nama '{$namaProduk}'" : "SKU '{$sku}'";
+                    throw new \RuntimeException("Baris {$rowNumber}: Produk dengan {$identifier} tidak ditemukan.");
                 }
 
                 if ($product->current_stock < $quantity) {
@@ -104,10 +113,13 @@ class SalesReportImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
         }
 
         foreach (['d/m/Y', 'd-m-Y', 'Y-m-d'] as $format) {
-            $parsedDate = Carbon::createFromFormat($format, $value);
-
-            if ($parsedDate !== false) {
-                return $parsedDate->setTimeFrom(now());
+            try {
+                $parsedDate = Carbon::createFromFormat($format, $value);
+                if ($parsedDate !== false) {
+                    return $parsedDate->setTimeFrom(now());
+                }
+            } catch (\Throwable) {
+                // Continue to next format if parsing fails
             }
         }
 
