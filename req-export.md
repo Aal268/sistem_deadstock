@@ -5,19 +5,20 @@ Ringkasan singkat: file ini menjelaskan format Excel/CSV yang dapat diimpor ke s
 
 # Template Format (header)
 - `tanggal_waktu` : tanggal dan waktu transaksi, format contoh `YYYY-MM-DD HH:MM:SS` (contoh: `2026-05-21 10:30:00`)
-- `sku`          : SKU produk yang ada di tabel `products` (harus cocok dengan kolom `sku` pada produk)
+- `nama_produk`   : nama produk yang terdaftar di sistem (pencocokan case-insensitive, atau fallback ke SKU jika kolom SKU disediakan)
 - `qty`          : jumlah barang (integer > 0)
 - `catatan`      : (opsional) catatan untuk baris transaksi
 
 Contoh (CSV / Excel sheet pertama):
 
-tanggal_waktu,sku,qty,catatan
-2026-05-21 10:30:00,ELK-001,2,Contoh laporan penjualan
-2026-05-21 11:00:00,SKU-ABC-123,1,
+tanggal_waktu,nama_produk,qty,catatan
+2026-05-21 10:30:00,Kabel Data Type C,2,Contoh laporan penjualan
+2026-05-21 11:00:00,Kemeja Polos Pria,1,
 
 Lokasi template yang dapat di-download dari aplikasi: route `GET /histori-sales/template-import` (nama route: `histori-sales.template-import`).
 
 Files utama terkait:
+
 - Controller import/export: [app/Http/Controllers/SaleController.php](app/Http/Controllers/SaleController.php)
 - Import processor: [app/Imports/SalesReportImport.php](app/Imports/SalesReportImport.php)
 - Export template helper: [app/Exports/SalesReportTemplateExport.php](app/Exports/SalesReportTemplateExport.php)
@@ -35,7 +36,7 @@ Apa yang terjadi saat import berhasil:
 Validasi yang diterapkan oleh import:
 - File harus ada dan berekstensi `xlsx`, `xls`, atau `csv`.
 - Setiap baris harus memiliki `tanggal_waktu` yang bisa diparse oleh Carbon.
-- `sku` harus ditemukan di tabel `products` (pencocokan exact).
+- `nama_produk` (atau `sku`) harus ditemukan di tabel `products`.
 - `qty` harus integer dan >= 1.
 - Jika ada baris yang invalid, proses di-rollback (semua baris batal) dan error dikembalikan.
 

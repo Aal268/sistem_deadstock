@@ -43,7 +43,7 @@
         class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         @csrf
         <p class="text-sm font-bold text-slate-900">Upload Import Excel</p>
-        <p class="mt-1 text-sm text-slate-500">Format kolom: tanggal_waktu, sku, qty, catatan.</p>
+        <p class="mt-1 text-sm text-slate-500">Format kolom: tanggal_waktu, nama_produk, qty, catatan.</p>
         <input type="file" name="file" accept=".xlsx,.xls,.csv"
             class="mt-4 block w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-secondary file:px-4 file:py-2 file:text-sm file:font-bold file:text-white">
         <button type="submit"
@@ -53,7 +53,6 @@
         </button>
     </form>
 </div>
-
 <!-- Filter Box -->
 <form method="GET" action="/histori-sales" class="mb-6 flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
     <div class="flex-1 min-w-[200px]">
