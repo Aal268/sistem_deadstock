@@ -10,14 +10,51 @@
         <i class="bi bi-plus-lg"></i> Tambah Barang Baru
     </a>
 </div>
+@if (session('error'))
+    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 font-bold">
+        {{ session('error') }}
+    </div>
+@endif
+
+<div class="mb-6 grid gap-4 lg:grid-cols-3">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <p class="text-sm font-bold text-slate-900">Impor Master Barang</p>
+                <p class="mt-1 text-sm text-slate-500">Unduh template dulu, sesuaikan isinya, lalu upload kembali ke sistem.</p>
+            </div>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+            <a href="{{ route('products.template-import') }}"
+                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100">
+                <i class="bi bi-download"></i>
+                Download Template Import
+            </a>
+        </div>
+    </div>
+
+    <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data"
+        class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        @csrf
+        <p class="text-sm font-bold text-slate-900">Upload Excel</p>
+        <p class="mt-1 text-sm text-slate-500">Mendukung format .xlsx, .xls, .csv</p>
+        <input type="file" name="file" accept=".xlsx,.xls,.csv" required
+            class="mt-4 block w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-secondary file:px-4 file:py-2 file:text-sm file:font-bold file:text-white">
+        <button type="submit"
+            class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-bold text-white transition hover:bg-primary">
+            <i class="bi bi-upload"></i>
+            Import Barang
+        </button>
+    </form>
+</div>
 
 <!-- Filter Box -->
-<form method="GET" action="/products" class="mb-6 flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-    <div class="flex-1 min-w-[200px]">
+<form method="GET" action="/products" class="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-end">
+    <div class="w-full sm:flex-1">
         <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Pencarian Produk</label>
         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama barang atau SKU..." class="w-full rounded-xl border border-primary px-4 py-2.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
     </div>
-    <div>
+    <div class="w-full sm:w-52">
         <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Filter Kategori</label>
         <select name="category_id" class="w-full rounded-xl border border-primary px-4 py-2.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
             <option value="">Semua Kategori</option>
@@ -26,12 +63,12 @@
             @endforeach
         </select>
     </div>
-    <div class="flex items-center gap-2">
-        <button type="submit" class="inline-flex h-[42px] items-center justify-center gap-2 rounded-xl bg-secondary px-5 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
+    <div class="flex w-full items-center gap-2 sm:w-auto">
+        <button type="submit" class="inline-flex h-[42px] flex-1 items-center justify-center gap-2 rounded-xl bg-secondary px-5 text-sm font-bold text-white transition hover:bg-primary shadow-sm sm:flex-initial">
             <i class="bi bi-funnel"></i> Filter
         </button>
         @if(request()->anyFilled(['search', 'category_id']))
-            <a href="/products" class="inline-flex h-[42px] items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-500 transition hover:bg-slate-200">
+            <a href="/products" class="inline-flex h-[42px] flex-1 items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-500 transition hover:bg-slate-200 sm:flex-initial">
                 Reset
             </a>
         @endif

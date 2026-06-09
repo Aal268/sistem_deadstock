@@ -109,6 +109,11 @@
                     </tbody>
                 </table>
             </div>
+            @if($suppliers->hasPages())
+            <div class="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+                {{ $suppliers->links() }}
+            </div>
+            @endif
         </div>
     </div>
 </div>

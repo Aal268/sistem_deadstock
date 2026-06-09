@@ -43,6 +43,10 @@ Route::middleware(["auth"])->group(function () {
 
     // Khusus Admin dan Gudang untuk Manajemen Data
     Route::middleware(["role:admin,gudang"])->group(function () {
+        Route::get("/purchases/template-import", [PurchaseController::class, "downloadImportTemplate"])
+            ->name("purchases.template-import");
+        Route::post("/purchases/import", [PurchaseController::class, "import"])
+            ->name("purchases.import");
         Route::get("/purchases", [PurchaseController::class, "index"]);
         Route::post("/purchases", [PurchaseController::class, "store"]);
         Route::get("/gudang", [
@@ -59,6 +63,10 @@ Route::middleware(["auth"])->group(function () {
             "suppliers",
             App\Http\Controllers\SupplierController::class,
         )->except(["create", "show", "edit", "update"]);
+        Route::get("/products/template-import", [App\Http\Controllers\ProductController::class, "downloadImportTemplate"])
+            ->name("products.template-import");
+        Route::post("/products/import", [App\Http\Controllers\ProductController::class, "import"])
+            ->name("products.import");
         Route::resource(
             "products",
             App\Http\Controllers\ProductController::class,
