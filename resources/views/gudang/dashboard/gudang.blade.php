@@ -9,7 +9,6 @@
             <p class="mt-1 text-sm font-medium text-slate-500">Monitor stok dan kelola data master inventaris.</p>
         </div>
         <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-info shadow-sm">
-            <i class="fa-solid fa-warehouse text-primary"></i>
             <span class="text-sm font-bold text-slate-700">Area Operasional Gudang</span>
         </div>
     </div>
@@ -52,7 +51,6 @@
     <!-- Quick Management Access -->
     <div class="space-y-4">
         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-gears text-primary"></i>
             Manajemen Data & Operasional
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -115,7 +113,6 @@
     <div class="rounded-2xl border border-info bg-white shadow-sm overflow-hidden">
         <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center gap-2">
-                <i class="fa-solid fa-boxes-stacked text-[#13505B]"></i>
                 <h3 class="font-bold text-slate-800">Daftar Inventaris Gudang</h3>
             </div>
             <span class="text-[10px] font-bold text-[#13505B] bg-[#13505B]/10 px-2 py-1 rounded">Katalog & Stok</span>

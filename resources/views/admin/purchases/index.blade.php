@@ -6,6 +6,44 @@
     <p class="text-sm text-slate-500">Catat barang masuk / restock dari supplier untuk menambah stok gudang.</p>
 </div>
 
+@if (session('error'))
+    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 font-bold">
+        {{ session('error') }}
+    </div>
+@endif
+
+<div class="mb-6 grid gap-4 lg:grid-cols-3">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <p class="text-sm font-bold text-slate-900">Import Barang Masuk via Excel</p>
+                <p class="mt-1 text-sm text-slate-500">Unduh template dulu, sesuaikan isinya, lalu upload kembali ke sistem.</p>
+            </div>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+            <a href="{{ route('purchases.template-import') }}"
+                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100">
+                <i class="bi bi-download"></i>
+                Download Template Import
+            </a>
+        </div>
+    </div>
+
+    <form action="{{ route('purchases.import') }}" method="POST" enctype="multipart/form-data"
+        class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        @csrf
+        <p class="text-sm font-bold text-slate-900">Upload Excel</p>
+        <p class="mt-1 text-sm text-slate-500">Mendukung format .xlsx, .xls, .csv</p>
+        <input type="file" name="file" accept=".xlsx,.xls,.csv" required
+            class="mt-4 block w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-secondary file:px-4 file:py-2 file:text-sm file:font-bold file:text-white">
+        <button type="submit"
+            class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-secondary px-4 py-3 text-sm font-bold text-white transition hover:bg-primary">
+            <i class="bi bi-upload"></i>
+            Import Barang Masuk
+        </button>
+    </form>
+</div>
+
 <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
     <!-- Form Penerimaan Barang -->
     <div class="lg:col-span-5">

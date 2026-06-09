@@ -20,7 +20,7 @@ class SupplierController extends Controller
             });
         }
 
-        $suppliers = $query->orderBy('name')->get();
+        $suppliers = $query->orderBy('name')->paginate(10)->withQueryString();
         return view('admin.suppliers.index', compact('suppliers'));
     }
 

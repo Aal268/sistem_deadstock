@@ -12,11 +12,30 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 
-<body class="min-h-screen bg-slate-100 text-slate-900">
+<body class="min-h-screen bg-slate-100 text-slate-900" x-data="{ sidebarOpen: false }">
     <div class="min-h-screen lg:flex">
-        <aside class="border-r border-slate-800/20 bg-slate-900 text-slate-200 lg:fixed lg:inset-y-0 lg:w-72">
+        <!-- Sidebar Backdrop for Mobile/Tablet -->
+        <div x-show="sidebarOpen" 
+             @click="sidebarOpen = false" 
+             x-transition:enter="transition-opacity ease-linear duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-30 bg-slate-900/50 backdrop-blur-sm lg:hidden"
+             x-cloak>
+        </div>
+
+        <aside 
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+            class="fixed inset-y-0 left-0 z-40 w-72 border-r border-slate-800/20 bg-slate-900 text-slate-200 transition-transform duration-300 ease-in-out lg:fixed lg:inset-y-0 lg:w-72"
+            x-cloak>
             <div class="flex h-full flex-col">
                 <div class="border-b border-white/10 px-6 py-8 text-center">
                     <img src="{{ asset('img/logo-ums-tif.webp') }}" alt="logo-tif"
@@ -128,17 +147,21 @@
         </aside>
 
         <div class="flex min-h-screen flex-1 flex-col lg:pl-72">
-            <header class="border-b border-slate-200 bg-white/80 backdrop-blur lg:hidden">
+            <header class="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur lg:hidden">
                 <div class="flex items-center justify-between px-4 py-4">
-                    <div>
-                        <p class="text-sm font-semibold text-slate-500">Deadstock Sys</p>
-                        <h2 class="text-lg font-bold text-slate-900">Menu</h2>
+                    <div class="flex items-center gap-3">
+                        <button @click="sidebarOpen = true" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition hover:bg-slate-200 focus:outline-none">
+                            <i class="bi bi-list text-2xl"></i>
+                        </button>
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-900">Menu Utama</h2>
+                        </div>
                     </div>
-                    <form action="/logout" method="POST">
+                    <form action="/logout" method="POST" class="m-0">
                         @csrf
                         <button type="submit"
-                            class="inline-flex items-center rounded-lg border border-red-500 px-3 py-2 text-sm font-semibold text-red-600">
-                            Logout
+                            class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-500/20 text-red-600 transition hover:bg-red-50">
+                            <i class="bi bi-box-arrow-left text-lg"></i>
                         </button>
                     </form>
                 </div>

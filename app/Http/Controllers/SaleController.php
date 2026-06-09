@@ -9,6 +9,7 @@ use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SaleController extends Controller
 {
@@ -36,37 +37,71 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-            'movement_date' => 'required|date'
-        ]);
+        $items = $request->input('products');
 
-        $product = Product::findOrFail($request->product_id);
-
-        if ($product->current_stock < $request->quantity) {
-            return back()->with('error', 'Stok tidak mencukupi untuk penjualan ini!');
+        if (!is_array($items) || empty($items)) {
+            $items = [[
+                'product_id' => $request->input('product_id'),
+                'quantity' => $request->input('quantity'),
+            ]];
         }
 
-        // Gabungkan tanggal input dengan waktu sekarang untuk detail timestamp
-        $movementDateTime = Carbon::parse($request->movement_date)->setTimeFrom(now());
+        $request->merge(['products' => $items]);
 
-        // Catat penjualan
-        StockMovement::create([
-            'product_id' => $product->id,
-            'type' => 'out',
-            'status' => 'success',
-            'quantity' => $request->quantity,
-            'price_at_transaction' => $product->unit_price,
-            'user_id' => auth()->id(),
-            'movement_date' => $movementDateTime,
-            'note' => $request->note ?? 'Penjualan oleh Kasir'
+        $request->validate([
+            'products' => 'required|array|min:1',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
+            'movement_date' => 'required|date',
+            'note' => 'nullable|string',
         ]);
 
-        // Kurangi stok
-        $product->decrement('current_stock', $request->quantity);
+        $salesItems = collect($request->input('products'))
+            ->filter(function ($item) {
+                return filled($item['product_id'] ?? null);
+            })
+            ->map(function ($item) {
+                return [
+                    'product_id' => (int) $item['product_id'],
+                    'quantity' => (int) $item['quantity'],
+                ];
+            })
+            ->values();
 
-        return back()->with('success', 'Transaksi penjualan berhasil dicatat!');
+        if ($salesItems->isEmpty()) {
+            return back()->withInput()->with('error', 'Tambahkan minimal satu barang sebelum memproses penjualan.');
+        }
+
+        try {
+            DB::transaction(function () use ($salesItems, $request) {
+                $movementDateTime = Carbon::parse($request->movement_date)->setTimeFrom(now());
+
+                foreach ($salesItems as $item) {
+                    $product = Product::whereKey($item['product_id'])->lockForUpdate()->firstOrFail();
+
+                    if ($product->current_stock < $item['quantity']) {
+                        throw new \RuntimeException("Stok {$product->name} tidak mencukupi untuk jumlah yang dipilih.");
+                    }
+
+                    StockMovement::create([
+                        'product_id' => $product->id,
+                        'type' => 'out',
+                        'status' => 'success',
+                        'quantity' => $item['quantity'],
+                        'price_at_transaction' => $product->unit_price,
+                        'user_id' => auth()->id(),
+                        'movement_date' => $movementDateTime,
+                        'note' => $request->note ?? 'Penjualan oleh Kasir',
+                    ]);
+
+                    $product->decrement('current_stock', $item['quantity']);
+                }
+            });
+
+            return back()->with('success', 'Transaksi penjualan berhasil dicatat!');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
     }
 
     public function show(StockMovement $stockMovement)

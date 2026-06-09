@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
+use App\Exports\PurchasesTemplateExport;
+use App\Imports\PurchasesImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PurchaseController extends Controller
 {
@@ -61,5 +64,28 @@ class PurchaseController extends Controller
         $product->increment('current_stock', $request->quantity);
 
         return back()->with('success', 'Transaksi pembelian/restock berhasil dicatat!');
+    }
+
+    public function downloadImportTemplate()
+    {
+        return Excel::download(
+            new PurchasesTemplateExport(),
+            'template-import-barang-masuk.xlsx'
+        );
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            Excel::import(new PurchasesImport(), $request->file('file'));
+
+            return back()->with('success', 'Transaksi barang masuk berhasil diimpor.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
     }
 }

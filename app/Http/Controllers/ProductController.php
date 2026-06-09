@@ -6,6 +6,9 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use App\Exports\ProductsTemplateExport;
+use App\Imports\ProductsImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -104,5 +107,28 @@ class ProductController extends Controller
 
         $product->delete();
         return back()->with('success', 'Barang berhasil dihapus!');
+    }
+
+    public function downloadImportTemplate()
+    {
+        return Excel::download(
+            new ProductsTemplateExport(),
+            'template-import-barang.xlsx'
+        );
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            Excel::import(new ProductsImport(), $request->file('file'));
+
+            return back()->with('success', 'Data barang berhasil diimpor.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
     }
 }
