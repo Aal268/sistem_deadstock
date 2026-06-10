@@ -49,12 +49,12 @@
 </div>
 
 <!-- Filter Box -->
-<form method="GET" action="/products" class="mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-end">
-    <div class="w-full sm:flex-1">
+<form method="GET" action="/products" class="mb-6 flex flex-wrap items-end gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div class="flex-1 min-w-[200px]">
         <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Pencarian Produk</label>
         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama barang atau SKU..." class="w-full rounded-xl border border-primary px-4 py-2.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
     </div>
-    <div class="w-full sm:w-52">
+    <div class="flex-1 min-w-[150px]">
         <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Filter Kategori</label>
         <select name="category_id" class="w-full rounded-xl border border-primary px-4 py-2.5 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
             <option value="">Semua Kategori</option>
@@ -63,12 +63,12 @@
             @endforeach
         </select>
     </div>
-    <div class="flex w-full items-center gap-2 sm:w-auto">
-        <button type="submit" class="inline-flex h-[42px] flex-1 items-center justify-center gap-2 rounded-xl bg-secondary px-5 text-sm font-bold text-white transition hover:bg-primary shadow-sm sm:flex-initial">
+    <div class="flex items-center gap-2">
+        <button type="submit" class="inline-flex h-[42px] items-center justify-center gap-2 rounded-xl bg-secondary px-5 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
             <i class="bi bi-funnel"></i> Filter
         </button>
         @if(request()->anyFilled(['search', 'category_id']))
-            <a href="/products" class="inline-flex h-[42px] flex-1 items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-500 transition hover:bg-slate-200 sm:flex-initial">
+            <a href="/products" class="inline-flex h-[42px] items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-500 transition hover:bg-slate-200">
                 Reset
             </a>
         @endif

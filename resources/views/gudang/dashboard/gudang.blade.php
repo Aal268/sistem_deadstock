@@ -119,7 +119,7 @@
         </div>
 
         <!-- Filter Box -->
-        <form method="GET" action="/gudang" class="border-b border-slate-100 bg-slate-50/50 p-5 flex flex-wrap items-end gap-3">
+        <form method="GET" action="/gudang" class="border-b border-slate-100 bg-slate-50/50 p-5 flex flex-wrap items-end gap-4">
             <div class="flex-1 min-w-[140px]">
                 <label class="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">Pencarian</label>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="SKU/Nama..." class="w-full rounded-xl border border-primary px-3 py-2 text-sm outline-none transition focus:border-secondary focus:ring-1 focus:ring-secondary">
@@ -142,11 +142,11 @@
                 </select>
             </div>
             <div class="flex items-center gap-2">
-                <button type="submit" class="inline-flex h-[42px] items-center justify-center gap-2 rounded-xl bg-secondary px-4 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
+                <button type="submit" class="inline-flex h-[42px] items-center justify-center gap-2 rounded-xl bg-secondary px-5 text-sm font-bold text-white transition hover:bg-primary shadow-sm">
                     <i class="bi bi-funnel"></i> Filter
                 </button>
                 @if(request()->anyFilled(['search', 'category_id', 'stock_status']))
-                    <a href="/gudang" class="inline-flex h-[42px] items-center justify-center rounded-xl bg-slate-200 px-3 text-sm font-bold text-slate-600 transition hover:bg-slate-300">
+                    <a href="/gudang" class="inline-flex h-[42px] items-center justify-center rounded-xl bg-slate-100 px-4 text-sm font-bold text-slate-500 transition hover:bg-slate-200">
                         Reset
                     </a>
                 @endif
