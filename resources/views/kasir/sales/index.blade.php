@@ -104,7 +104,7 @@
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
         <!-- Form Input Penjualan -->
         <div class="lg:col-span-5">
-            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden sticky top-8">
+            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden lg:sticky lg:top-8">
                 <div class="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
                     <h5 class="font-bold text-slate-800">Form Input Penjualan</h5>
                 </div>

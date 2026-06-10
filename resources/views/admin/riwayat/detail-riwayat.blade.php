@@ -15,8 +15,8 @@
     <!-- Invoice Info -->
     <div class="lg:col-span-8">
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <div class="border-b border-slate-100 bg-slate-50/50 px-8 py-6">
-                <div class="flex items-center justify-between">
+            <div class="border-b border-slate-100 bg-slate-50/50 px-4 py-5 sm:px-6 lg:px-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <span class="inline-flex rounded bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-600 border border-emerald-100 uppercase tracking-wider">
                             {{ $stockMovement->status ?? 'Success' }}
@@ -24,16 +24,16 @@
                         <h3 class="mt-2 text-xl font-bold text-slate-900">{{ $stockMovement->product->name }}</h3>
                         <p class="text-sm text-slate-500">{{ $stockMovement->product->sku }} | {{ $stockMovement->product->category->name }}</p>
                     </div>
-                    <div class="text-right">
+                    <div class="text-left sm:text-right">
                         <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Waktu Transaksi</p>
                         <p class="text-sm font-bold text-slate-700">{{ \Carbon\Carbon::parse($stockMovement->movement_date)->format('d F Y, H:i') }} WIB</p>
                     </div>
                 </div>
             </div>
             
-            <div class="p-8">
-                <div class="overflow-hidden rounded-xl border border-slate-100">
-                    <table class="w-full text-left text-sm">
+            <div class="p-4 sm:p-6 lg:p-8">
+                <div class="overflow-x-auto rounded-xl border border-slate-100">
+                    <table class="w-full text-left text-sm min-w-[500px]">
                         <thead class="bg-slate-50 font-bold text-slate-600">
                             <tr>
                                 <th class="px-6 py-4">Item</th>
@@ -73,7 +73,7 @@
             </div>
             
             {{-- init utk cetak dan download pdf --}}
-            <div class="border-t border-slate-100 bg-white px-8 py-6 flex justify-end gap-3">
+            <div class="border-t border-slate-100 bg-white px-4 py-5 sm:px-6 lg:px-8 flex flex-wrap justify-end gap-3">
                 <button class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50">
                     <i class="fa-solid fa-print"></i> Cetak Struk
                 </button>

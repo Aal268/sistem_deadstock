@@ -14,7 +14,7 @@
         <div class="relative mx-auto flex min-h-screen w-full max-w-5xl items-center px-4 py-6 sm:px-6 lg:px-8">
             <section
                 class="grid w-full overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-1 ring-info/80 xl:grid-cols-[1.02fr_0.98fr]">
-                <div class="relative overflow-hidden bg-primary px-6 py-10 text-white sm:px-10 lg:px-12 lg:py-12">
+                <div class="hidden xl:block relative overflow-hidden bg-primary px-6 py-10 text-white sm:px-10 lg:px-12 lg:py-12">
                     <div class="relative flex h-full flex-col justify-between gap-10">
                         <div class="space-y-5">
                             <div class="max-w-2xl space-y-4">

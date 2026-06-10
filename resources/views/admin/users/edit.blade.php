@@ -14,7 +14,7 @@
 <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
     <div class="lg:col-span-6">
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            <div class="p-8">
+            <div class="p-4 sm:p-6 lg:p-8">
                 @if ($errors->any())
                     <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
                         <ul class="list-inside list-disc">

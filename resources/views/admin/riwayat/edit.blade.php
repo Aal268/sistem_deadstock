@@ -13,11 +13,11 @@
 
 <div class="mx-auto max-w-3xl">
     <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div class="border-b border-slate-100 bg-slate-50/50 px-8 py-5">
+        <div class="border-b border-slate-100 bg-slate-50/50 px-4 py-5 sm:px-6 lg:px-8">
             <h3 class="font-bold text-slate-800">Form Edit Transaksi #{{ str_pad($stockMovement->id, 6, '0', STR_PAD_LEFT) }}</h3>
         </div>
         
-        <form action="{{ route('riwayat.update', $stockMovement->id) }}" method="POST" class="p-8">
+        <form action="{{ route('riwayat.update', $stockMovement->id) }}" method="POST" class="p-4 sm:p-6 lg:p-8">
             @csrf
             @method('PUT')
             
