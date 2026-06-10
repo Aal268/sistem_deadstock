@@ -142,3 +142,55 @@ Berikut adalah detail isi konten serta elemen desain yang perlu Anda buat di Can
         *   Email: `author@university.edu`
         *   GitHub: `github.com/username/sistem_deadstock`
         *   *QR Code*: [Masukkan QR Code demo sistem Anda di sini]
+
+
+
+
+HEADER
+Flag: 🇮🇩 INDONESIA
+Main Title: WEB-BASED DEADSTOCK & SLOW-MOVING PRODUCT MANAGEMENT SYSTEM FOR MSMEs
+Sub-Title: Intelligent Inventory Optimization & Collaborative Decision Support System
+Team Info: [Nama Tim Anda] • [Nama Universitas Anda]
+INTRODUCTION
+Problem:
+Capital Stagnation: Unsold products (Deadstock) clog retail cash flows, locking up valuable operational capital for Micro, Small, and Medium Enterprises (MSMEs).
+Manual Intuition: Procurement decisions lack automation, leading to frequent stockouts on fast-moving items and overstocking on slow-moving ones.
+Solution:
+Automated DSS: Uses a 3-month rolling average algorithm to dynamically categorize product velocity and calculate replenishment needs.
+Transaction-Safe Operations: Integrated validation pipelines to process bulk sales records without the risk of stock count discrepancies.
+METHODOLOGY
+Flowchart: Requirement Analysis ──> Database Design ──> DSS Algorithm Coding ──> Validation Testing
+Development Steps:
+Requirement Analysis: Identified MSME bottlenecks and established database structures for stock tracking.
+System Design: Constructed entity relationships linking products, safety stocks, and stock movements.
+DSS Algorithm Integration: Programmed mathematical logic to evaluate 3-month rolling sales records.
+Testing & Validation: Deployed database transaction rollbacks to secure bulk import processes.
+MAIN INNOVATION
+DSS (Decision Support System): Algorithmic categorization of inventory items based on velocity, helping managers distinguish active goods from stagnant stock.
+Suggested Order: Automatically calculates exact replenishment quantities: Suggested Order = (Monthly Average + Safety Stock) - Current Stock
+Atomic Importer: Spreadsheet importer built with database transaction blocks; aborts and rolls back database changes if a single invalid row is found.
+RBAC (Role-Based Access Control): Dedicated views and actions for Admin (decision-making), Warehouse/Gudang (stock checking), and Cashier (sales input).
+DATA & DISCUSSION
+Formula (Monthly Sales Average - $A_{monthly}$): Average Monthly Sales = Total Sales in Last 3 Months / 3
+Classification Rules:
+Deadstock: Sales (3M) = 0 | Recommendation: Stop purchasing / Clearance clearance sales | Suggested Buy = 0
+Fast-Moving: Sales (3M) > 0 & Stock < 1.5 * Average Monthly Sales | Recommendation: Urgent reorder | Suggested Buy = (Average Monthly Sales + Safety Stock) - Current Stock
+Slow-Moving: Sales (3M) > 0 & Stock >= 1.5 * Average Monthly Sales | Recommendation: Defer / Order minimum stock | Suggested Buy = (Average Monthly Sales + Safety Stock) - Current Stock
+Bar Chart Suggestion (Data untuk Grafik Batang):
+Deadstock: 300 Pcs (High stock value, zero movement)
+Slow-Moving: 150 Pcs (Medium stock value, low movement)
+Fast-Moving: 20 Pcs (Critical stock, urgent replenishment needed)
+KEY RESULTS & CONCLUSION
+Prevent Capital Loss: Instantly highlights deadstock to trigger clearance sales, converting idle warehouse stock back into active business cash flow.
+Inventory Optimization: Prevents over-purchasing of slow-moving items while keeping fast-moving items sufficiently stocked based on mathematical safety stock thresholds.
+Zero Discrepancy: The transaction-safe bulk importer ensures digital stock counts match real-world physical stock with zero transaction loss.
+RECOMMENDATIONS
+Automated Supplier POs: Direct integration to supplier APIs to auto-send Purchase Orders when stock reaches safety thresholds.
+Dynamic Markdowns: Implementing automatic, time-based price reductions triggered by deadstock aging.
+Predictive Machine Learning: Utilizing ARIMA or Prophet models to forecast demand cycles based on historic trends.
+REFERENCES + CONTACT + QR CODE
+References:
+Silver, E. A., Pyke, D. F., & Thomas, D. J. (2016). Inventory and Production Management in Supply Chains. CRC Press.
+Laravel Core Documentation. Database Transactions & Validation Pipelines.
+Contact: your.email@university.edu | github.com/username/sistem_deadstock
+QR Code: (Gunakan fitur pembuat QR Code di Canva untuk membuat kode QR yang mengarah langsung ke repositori GitHub atau demo aplikasi Anda)
